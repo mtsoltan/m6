@@ -26,15 +26,15 @@ bool Token::is_line_terminator (char c) {
     return c == '\r' || c == '\n';
 }
 
-opcode_t Token::cstr_to_keyword(const char c[KEYWORD_SIZE]) {
+opcode_t Token::cstr_to_keyword(const char c[OP_KEYWORD_SIZE]) {
     uint8_t end = 0;
-    for (; end < KEYWORD_SIZE; ++end) {
+    for (; end < OP_KEYWORD_SIZE; ++end) {
         if (Token::is_whitespace(c[end])) {
             break;
         }
     }
-    for (opcode_t i = KEYWORD; i <= KEYWORD_END; ++i) {
-        if (strncmp(KEYWORDS[i - KEYWORD], c, end) == 0) {
+    for (opcode_t i = OP_KEYWORD; i <= OP_KEYWORD_END; ++i) {
+        if (strncmp(KEYWORDS[i - OP_KEYWORD], c, end) == 0) {
             return i;
         }
     }

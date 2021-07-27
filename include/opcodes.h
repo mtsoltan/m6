@@ -3,20 +3,20 @@
 
 #include <cinttypes>
 
-#define KEYWORD         (1u << 15)
-#define KEYWORD_END     (KEYWORD_END_ - 1)
-#define KEYWORD_SIZE    (sizeof("synchronized") / sizeof(char))
+#define OP_KEYWORD         ((opcode_t) (1u << 15u))
+#define OP_KEYWORD_END     ((opcode_t) (KEYWORD_END_ - 1))
+#define OP_KEYWORD_SIZE    (sizeof("synchronized") / sizeof(char))
 
-#define UNARY_L         (1u << 14)
-#define UNARY_R         (1u << 13)
-#define UNARY           (UNARY_L | UNARY_R)  // What is not unary is binary.
+#define OP_UNARY_L         ((opcode_t) (1u << 14u))
+#define OP_UNARY_R         ((opcode_t) (1u << 13u))
+#define OP_UNARY           ((opcode_t) (OP_UNARY_L | OP_UNARY_R))  // What is not unary is binary.
 
-#define ASSIGNMENT      (7u << 10)
-#define COMPARISON      (6u << 10)
-#define ARITHMETIC      (5u << 10)
-#define BITWISE         (4u << 10)
-#define LOGICAL         (3u << 10)
-#define START_END       (1u << 8)
+#define OP_ASSIGNMENT      ((opcode_t) (7u << 10u))
+#define OP_COMPARISON      ((opcode_t) (6u << 10u))
+#define OP_ARITHMETIC      ((opcode_t) (5u << 10u))
+#define OP_BITWISE         ((opcode_t) (4u << 10u))
+#define OP_LOGICAL         ((opcode_t) (3u << 10u))
+#define OP_START_END       ((opcode_t) (1u << 8u))
 
 typedef uint16_t opcode_t;
 
@@ -38,7 +38,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_TRIPLEDOT,
     OPCODE_DOTQMARK,
 
-    OPCODE_A = ASSIGNMENT,
+    OPCODE_A = OP_ASSIGNMENT,
     OPCODE_AADD,
     OPCODE_ASUB,
     OPCODE_AMUL,
@@ -55,7 +55,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_AORL,
     OPCODE_ANULL,  // ??=
 
-    OPCODE_EQ = COMPARISON,
+    OPCODE_EQ = OP_COMPARISON,
     OPCODE_NE,
     OPCODE_EQE,  // Strict
     OPCODE_NEE,
@@ -64,34 +64,34 @@ enum opcode_enum_t : opcode_t {
     OPCODE_LT,
     OPCODE_LTE,
 
-    OPCODE_ADD = ARITHMETIC,
+    OPCODE_ADD = OP_ARITHMETIC,
     OPCODE_SUB,
     OPCODE_MUL,
     OPCODE_DIV,  // Divide is also the regex starter / ender.
     OPCODE_REM,
     OPCODE_PWR,
 
-    OPCODE_INC = UNARY | ARITHMETIC,
+    OPCODE_INC = OP_UNARY | OP_ARITHMETIC,
     OPCODE_DEC,
 
-    OPCODE_USUB = UNARY_L | ARITHMETIC,
+    OPCODE_USUB = OP_UNARY_L | OP_ARITHMETIC,
     OPCODE_UADD,
 
-    OPCODE_ANDB = BITWISE,
+    OPCODE_ANDB = OP_BITWISE,
     OPCODE_ORB,
     OPCODE_XORB,
     OPCODE_SHL,
     OPCODE_SHR,
     OPCODE_SHRU,  // >>>, the zero fill right shift
 
-    OPCODE_NOTB = UNARY_L | BITWISE,
+    OPCODE_NOTB = OP_UNARY_L | OP_BITWISE,
 
-    OPCODE_NOTL = UNARY_L | LOGICAL,
+    OPCODE_NOTL = OP_UNARY_L | OP_LOGICAL,
 
-    OPCODE_ANDL = LOGICAL,
+    OPCODE_ANDL = OP_LOGICAL,
     OPCODE_ORL,
 
-    OPCODE_QDOUBLE = START_END,
+    OPCODE_QDOUBLE = OP_START_END,
     OPCODE_QSINGLE,
     OPCODE_QTICK,
 
@@ -105,7 +105,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_COMMENT2,
     OPCODE_COMMENTL,
 
-    OPCODE_BREAK = KEYWORD,  // Permanently reserved.  // TODO: Organize those based on usage.
+    OPCODE_BREAK = OP_KEYWORD,  // Permanently reserved.  // TODO: Organize those based on usage.
     OPCODE_CASE,
     OPCODE_CATCH,
     OPCODE_CLASS,
@@ -172,11 +172,11 @@ enum opcode_enum_t : opcode_t {
     OPCODE_NULL,  // Used by the language so cannot be used as identifiers.
     OPCODE_TRUE,
     OPCODE_FALSE,
-    KEYWORD_END_
+    KEYWORD_END_,
 
 };
 
-const char KEYWORDS[KEYWORD_END - KEYWORD + 1][KEYWORD_SIZE] = {
+const char KEYWORDS[OP_KEYWORD_END - OP_KEYWORD + 1][OP_KEYWORD_SIZE] = {
         "break",
         "case",
         "catch",
