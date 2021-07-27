@@ -1,7 +1,10 @@
 #ifndef M6_TOPLEV_H
 #define M6_TOPLEV_H
 
+#include <string>
+#include <vector>
 #include <cinttypes>
+
 #include <errors.h>
 #include <opcodes.h>
 #include <config.h>

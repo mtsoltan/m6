@@ -1,8 +1,6 @@
 #ifndef M6_TOKENTYPECHECKER_H
 #define M6_TOKENTYPECHECKER_H
 
-#include <string>
-#include <vector>
 #include <fstream>
 #include <algorithm>
 
