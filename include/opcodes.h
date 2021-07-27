@@ -1,11 +1,24 @@
 #ifndef M6_OPCODES_H
 #define M6_OPCODES_H
 
-#define FIRST_KEYWORD      OPCODE_BREAK
-#define LAST_KEYWORD       OPCODE_FALSE
-#define BIGGEST_KEYWORD    (sizeof("synchronized") / sizeof(char))
+#include <cinttypes>
 
-typedef unsigned char opcode_t;
+#define KEYWORD         (1u << 15)
+#define KEYWORD_END     (KEYWORD_END_ - 1)
+#define KEYWORD_SIZE    (sizeof("synchronized") / sizeof(char))
+
+#define UNARY_L         (1u << 14)
+#define UNARY_R         (1u << 13)
+#define UNARY           (UNARY_L | UNARY_R)  // What is not unary is binary.
+
+#define ASSIGNMENT      (7u << 10)
+#define COMPARISON      (6u << 10)
+#define ARITHMETIC      (5u << 10)
+#define BITWISE         (4u << 10)
+#define LOGICAL         (3u << 10)
+#define START_END       (1u << 8)
+
+typedef uint16_t opcode_t;
 
 // TODO: Turn those into bitmask with bits for:
 //  2 bits - Start/end operators
@@ -14,42 +27,71 @@ typedef unsigned char opcode_t;
 enum opcode_enum_t : opcode_t {
     OPCODE_NOOP,
 
-    OPCODE_A,
+    OPCODE_QMARK,
+    OPCODE_COLON,  // Used in trinary operators, cases, labels, and object property declaration.
+
+    OPCODE_COMMA,
+    OPCODE_DQMARK,
+    OPCODE_ARROW,
+
+    OPCODE_DOT,
+    OPCODE_TRIPLEDOT,
+    OPCODE_DOTQMARK,
+
+    OPCODE_A = ASSIGNMENT,
     OPCODE_AADD,
     OPCODE_ASUB,
     OPCODE_AMUL,
     OPCODE_ADIV,
     OPCODE_AREM,
     OPCODE_APWR,
+    OPCODE_ASHL,
+    OPCODE_ASHR,
+    OPCODE_ASHRU,
     OPCODE_AANDB,
-    OPCODE_AANDL,
-    OPCODE_AORB,
-    OPCODE_AORL,
-    OPCODE_ANOTB,
-    OPCODE_ANOTL,
     OPCODE_AXORB,
-    OPCODE_AXORL,
+    OPCODE_AORB,
+    OPCODE_AANDL,
+    OPCODE_AORL,
+    OPCODE_ANULL,  // ??=
 
-    OPCODE_ARROW,
-
-    OPCODE_LT,
-    OPCODE_GT,
-    OPCODE_LTE,
-    OPCODE_GTE,
-    OPCODE_EQ,
-    OPCODE_EQE,
+    OPCODE_EQ = COMPARISON,
     OPCODE_NE,
+    OPCODE_EQE,  // Strict
     OPCODE_NEE,
+    OPCODE_GT,
+    OPCODE_GTE,
+    OPCODE_LT,
+    OPCODE_LTE,
 
-    OPCODE_DOT,
-    OPCODE_TRIPLEDOT,
-    OPCODE_DOTQMARK,
-    OPCODE_COMMA,
-    OPCODE_QMARK,
-    OPCODE_DQMARK,
-    OPCODE_COLON,  // Used in trinary operators, cases, and labels.
+    OPCODE_ADD = ARITHMETIC,
+    OPCODE_SUB,
+    OPCODE_MUL,
+    OPCODE_DIV,  // Divide is also the regex starter / ender.
+    OPCODE_REM,
+    OPCODE_PWR,
 
-    OPCODE_QDOUBLE,
+    OPCODE_INC = UNARY | ARITHMETIC,
+    OPCODE_DEC,
+
+    OPCODE_USUB = UNARY_L | ARITHMETIC,
+    OPCODE_UADD,
+
+    OPCODE_ANDB = BITWISE,
+    OPCODE_ORB,
+    OPCODE_XORB,
+    OPCODE_SHL,
+    OPCODE_SHR,
+    OPCODE_SHRU,  // >>>, the zero fill right shift
+
+    OPCODE_NOTB = UNARY_L | BITWISE,
+
+    OPCODE_NOTL = UNARY_L | LOGICAL,
+
+    OPCODE_ANDL = LOGICAL,
+    OPCODE_ORL,
+
+    OPCODE_QDOUBLE = START_END,
     OPCODE_QSINGLE,
     OPCODE_QTICK,
 
@@ -63,31 +105,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_COMMENT2,
     OPCODE_COMMENTL,
 
-    OPCODE_DIV,  // Divide is also the regex starter / ender.
-    OPCODE_MUL,
-    OPCODE_PWR,
-    OPCODE_SUB,
-    OPCODE_ADD,
-    OPCODE_UADD,
-    OPCODE_REM,
-
-    OPCODE_ANDB,
-    OPCODE_ANDL,
-    OPCODE_ORB,
-    OPCODE_ORL,
-    OPCODE_NOTB,
-    OPCODE_NOTL,
-    OPCODE_XORB,
-    OPCODE_XORL,
-    OPCODE_SHL,
-    OPCODE_SHR,
-    OPCODE_SHLI,
-    OPCODE_SHRI,
-
-    OPCODE_INC,
-    OPCODE_DEC,
-
-    OPCODE_BREAK,  // Permanently reserved.
+    OPCODE_BREAK = KEYWORD,  // Permanently reserved.  // TODO: Organize those based on usage.
     OPCODE_CASE,
     OPCODE_CATCH,
     OPCODE_CLASS,
@@ -154,10 +172,11 @@ enum opcode_enum_t : opcode_t {
     OPCODE_NULL,  // Used by the language so cannot be used as identifiers.
     OPCODE_TRUE,
     OPCODE_FALSE,
+    KEYWORD_END_
 
 };
 
-const char KEYWORDS[LAST_KEYWORD - FIRST_KEYWORD + 1][BIGGEST_KEYWORD] = {
+const char KEYWORDS[KEYWORD_END - KEYWORD + 1][KEYWORD_SIZE] = {
         "break",
         "case",
         "catch",

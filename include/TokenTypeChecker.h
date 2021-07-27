@@ -9,8 +9,8 @@
 #include <toplev.h>
 #include <Token.h>
 
-#define LOG_EXPECTING_BUFFER_N ((unsigned char) 2)
-#define EXPECTING_BUFFER_N ((unsigned char) 1 << LOG_EXPECTING_BUFFER_N)
+#define LOG_EXPECTING_BUFFER_N ((uint8_t) 2)
+#define EXPECTING_BUFFER_N ((uint8_t) 1 << LOG_EXPECTING_BUFFER_N)
 
 // NO_INCEREMENT is used to signal that the token iterator has reached the character after this token ended,
 // and does not need to be incremented to reach it.
@@ -34,7 +34,7 @@ protected:
     std::string::iterator tokenizer_iterator;
 
     token_type_t expecting[EXPECTING_BUFFER_N]{};
-    unsigned char expecting_iterator = 0;
+    uint8_t expecting_iterator = 0;
 
 
     bool process_symbol();

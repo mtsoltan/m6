@@ -143,8 +143,8 @@ bool TokenTypeChecker::next_token_is_number () {
 }
 
 opcode_t TokenTypeChecker::next_token_is_keyword () {
-    std::string::iterator end = this->tokenizer_string.end() - this->tokenizer_iterator > BIGGEST_KEYWORD ?
-                                this->tokenizer_iterator + BIGGEST_KEYWORD :
+    std::string::iterator end = this->tokenizer_string.end() - this->tokenizer_iterator > KEYWORD_SIZE ?
+                                this->tokenizer_iterator + KEYWORD_SIZE :
                                 this->tokenizer_string.end();
     return Token::cstr_to_keyword(std::string(this->tokenizer_iterator, end).c_str());
 }

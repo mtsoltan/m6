@@ -2,9 +2,9 @@
 
 bool LiteralProcessor::process_keyword (opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
-    if (memoized >= FIRST_KEYWORD) {
+    if (memoized & KEYWORD) {
         this->token_vector.emplace_back(OPERATOR, memoized);
-        this->tokenizer_iterator += strlen(KEYWORDS[memoized - FIRST_KEYWORD]) + 1;
+        this->tokenizer_iterator += strlen(KEYWORDS[memoized - KEYWORD]) + 1;
         return true;
     }
 
@@ -61,7 +61,7 @@ bool LiteralProcessor::process_number_literal () {
     long accumulator = 0;
     long decimal_accumulator = 0;  // For a special case in which a number starts with zero yet is decimal.
     double accumulator_f = 0.0;
-    char sign = 1;
+    int8_t sign = 1;
     bool strict_oct = false;
 
     for (;this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
