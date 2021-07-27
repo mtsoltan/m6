@@ -26,7 +26,7 @@ protected:
     int (* log_handler) (const char*, ...);
 
     std::vector<std::string> identifier_stack;
-    std::vector<Token> token_vector;
+    std::vector<Token*> token_vector;
 
     std::string tokenizer_string;
     std::string::iterator tokenizer_iterator;

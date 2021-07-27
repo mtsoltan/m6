@@ -2,8 +2,8 @@
 
 bool LiteralProcessor::process_keyword (opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
-        this->token_vector.emplace_back(OPERATOR, memoized);
     if (memoized & OP_KEYWORD) {
+        this->token_vector.push_back(new ValueToken(OPERATOR, new int(memoized)));
         this->tokenizer_iterator += strlen(KEYWORDS[memoized - OP_KEYWORD]) + 1;
         return true;
     }
@@ -40,7 +40,7 @@ bool LiteralProcessor::process_identifier () {
     }
 
     // Create a token with the identifier index in the identifier stack.
-    this->token_vector.emplace_back(IDENTIFIER, value);
+    this->token_vector.push_back(new ValueToken(IDENTIFIER, new int(value)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
     // we have reached something that isn't part of this identifier.
@@ -187,10 +187,10 @@ bool LiteralProcessor::process_number_literal () {
         while (temp > 1) temp /= 10;
         accumulator_f += temp;
         accumulator_f *= sign;
-        this->token_vector.emplace_back(NUMBER, *((int *)&accumulator_f), subtype);
+        this->token_vector.push_back(new ValueToken(NUMBER, new double(accumulator_f), subtype));
     } else {
         accumulator *= sign;
-        this->token_vector.emplace_back(NUMBER, accumulator, subtype);
+        this->token_vector.push_back(new ValueToken(NUMBER, new int(accumulator), subtype));
     }
 
     return true;

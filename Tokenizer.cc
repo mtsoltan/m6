@@ -29,7 +29,7 @@ token_type_t TokenTypeChecker::unexpect() {
  * @param file_contents
  * @return
  */
-std::vector<Token>& Tokenizer::tokenize (std::string str) {
+std::vector<Token*>& Tokenizer::tokenize (std::string str) {
     this->tokenizer_iterator = str.begin();
     this->tokenizer_string = str;
 
@@ -49,7 +49,7 @@ std::vector<Token>& Tokenizer::tokenize (std::string str) {
  * @param file_name
  * @return
  */
-std::vector<Token>& Tokenizer::tokenize (const char* file_name) {
+std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
     std::ifstream file (file_name , std::ios::binary | std::ios::in);
 
     if(file.fail()) {
@@ -98,13 +98,13 @@ bool Tokenizer::process_next_token () {
 
     // If it's an EOL or EOS, we just skip past it and empalce it.
     if (Token::is_line_terminator(*this->tokenizer_iterator) && (expected_type & EOL)) {
-        this->token_vector.emplace_back(EOL, 0);
+        this->token_vector.push_back(new ValueToken(EOL, nullptr));
         ++this->tokenizer_iterator;
         rv = true;
         goto expect;
     }
     if (*this->tokenizer_iterator == ';' && (expected_type & EOS)) {
-        this->token_vector.emplace_back(EOS, 0);
+        this->token_vector.push_back(new ValueToken(EOS, nullptr));
         ++this->tokenizer_iterator;
         rv = true;
         goto expect;
