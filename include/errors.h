@@ -9,7 +9,7 @@
 #define ERR_TOKENIZING_SYNTAX_ERROR 3
 
 
-extern char errors[ERR_COUNT + 1][100];
+extern const char errors[ERR_COUNT + 1][100];
 
 
 #endif
