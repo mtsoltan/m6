@@ -10,7 +10,7 @@
 #define LOG_EXPECTING_BUFFER_N ((uint8_t) 2)
 #define EXPECTING_BUFFER_N ((uint8_t) 1 << LOG_EXPECTING_BUFFER_N)
 
-// NO_INCEREMENT is used to signal that the token iterator has reached the character after this token ended,
+// NO_INCREMENT is used to signal that the token iterator has reached the character after this token ended,
 // and does not need to be incremented to reach it.
 //
 // If code parses till the last character and stops (without incrementing), we increment.
