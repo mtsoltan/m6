@@ -18,7 +18,7 @@
 #define OP_ARITHMETIC      ((opcode_t) (5u << 10u))
 #define OP_BITWISE         ((opcode_t) (4u << 10u))
 #define OP_LOGICAL         ((opcode_t) (3u << 10u))
-#define OP_START_END       ((opcode_t) (1u << 8u))
+#define OP_START_END       ((opcode_t) (1u << 9u))
 
 typedef uint16_t opcode_t;
 
