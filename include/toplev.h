@@ -20,7 +20,7 @@
 #ifdef LOG_ERRORS
 #define _LTS \
             break; \
-        } catch (const int e) { \
+        } catch (const int64_t e) { \
             _L("%s\n", errors[e]); \
             _X(); \
             break; \
@@ -33,7 +33,7 @@
     }
 #endif
 
-typedef int return_status_t;
+typedef int64_t return_status_t;
 
 inline constexpr unsigned char operator "" _uc (unsigned long long arg) noexcept {
     return static_cast <unsigned char> (arg);

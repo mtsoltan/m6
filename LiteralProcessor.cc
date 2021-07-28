@@ -5,8 +5,8 @@
 bool LiteralProcessor::process_keyword (opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
-        this->token_vector.push_back(new ValueToken(OPERATOR, new int(memoized)));
         // TODO: https://github.com/mtsoltan/m6/issues/6
+        this->token_vector.push_back(new ValueToken(KEYWORD, new opcode_t(memoized)));
         this->tokenizer_iterator += strlen(KEYWORDS[memoized - OP_KEYWORD]) + 1;
         return true;
     }
@@ -33,7 +33,7 @@ bool LiteralProcessor::process_identifier () {
     std::string identifier = std::string(original_iterator, this->tokenizer_iterator);
     auto position = std::find(this->identifier_stack.begin(), this->identifier_stack.end(), identifier);
 
-    long value;
+    uint64_t value;  // An index in a vector, unsigned.
 
     if (position == this->identifier_stack.end()) {
         value = this->identifier_stack.size();
@@ -43,7 +43,7 @@ bool LiteralProcessor::process_identifier () {
     }
 
     // Create a token with the identifier index in the identifier stack.
-    this->token_vector.push_back(new ValueToken(IDENTIFIER, new int(value)));
+    this->token_vector.push_back(new ValueToken(IDENTIFIER, new uint64_t(value)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
     // we have reached something that isn't part of this identifier.
@@ -61,8 +61,8 @@ bool LiteralProcessor::process_identifier () {
 bool LiteralProcessor::process_number_literal () {
     auto subtype = (token_subtype_t) UNDEFINED;
 
-    long accumulator = 0;
-    long decimal_accumulator = 0;  // For a special case in which a number starts with zero yet is decimal.
+    int64_t accumulator = 0;
+    int64_t decimal_accumulator = 0;  // For a special case in which a number starts with zero yet is decimal.
     double accumulator_f = 0.0;
     int8_t sign = 1;
     bool strict_oct = false;
@@ -193,7 +193,7 @@ bool LiteralProcessor::process_number_literal () {
         this->token_vector.push_back(new ValueToken(NUMBER, new double(accumulator_f), subtype));
     } else {
         accumulator *= sign;
-        this->token_vector.push_back(new ValueToken(NUMBER, new int(accumulator), subtype));
+        this->token_vector.push_back(new ValueToken(NUMBER, new int64_t(accumulator), subtype));
     }
 
     return true;

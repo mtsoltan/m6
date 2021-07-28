@@ -103,9 +103,9 @@ bool TokenTypeChecker::process_symbol () {
     return true;
 }
 
-long TokenTypeChecker::get_char_offset () {
+int64_t TokenTypeChecker::get_char_offset () {
     if (this->tokenizer_iterator == this->tokenizer_string.end() || *this->tokenizer_iterator == '\0') {
-        return NOT_FOUND;
+        return NOT_FOUND;  // This whole function needs to be signed, because NOT_FOUND is negative.
     }
 
     return this->tokenizer_iterator - this->tokenizer_string.begin();

@@ -42,7 +42,7 @@ protected:
     bool next_token_is_number();
     opcode_t next_token_is_keyword();
 
-    long get_char_offset();
+    int64_t get_char_offset();
 
     token_type_t unexpect();
 
