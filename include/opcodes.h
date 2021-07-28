@@ -3,6 +3,8 @@
 
 #include <cinttypes>
 
+// TODO: https://github.com/mtsoltan/m6/issues/2
+
 #define OP_KEYWORD         ((opcode_t) (1u << 15u))
 #define OP_KEYWORD_END     ((opcode_t) (KEYWORD_END_ - 1))
 #define OP_KEYWORD_SIZE    (sizeof("synchronized") / sizeof(char))
@@ -20,10 +22,6 @@
 
 typedef uint16_t opcode_t;
 
-// TODO: Turn those into bitmask with bits for:
-//  2 bits - Start/end operators
-//  2 bits - number of operands - 1  (care for function literals when implementing for(a;b;c){d} etc.
-//  1 bits - Is keyword?
 enum opcode_enum_t : opcode_t {
     OPCODE_NOOP,
 
@@ -105,7 +103,8 @@ enum opcode_enum_t : opcode_t {
     OPCODE_COMMENT2,
     OPCODE_COMMENTL,
 
-    OPCODE_BREAK = OP_KEYWORD,  // Permanently reserved.  // TODO: Organize those based on usage.
+    // TODO: https://github.com/mtsoltan/m6/issues/2#issuecomment-887923183
+    OPCODE_BREAK = OP_KEYWORD,  // Permanently reserved.
     OPCODE_CASE,
     OPCODE_CATCH,
     OPCODE_CLASS,

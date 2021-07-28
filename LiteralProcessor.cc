@@ -1,9 +1,12 @@
 #include <LiteralProcessor.h>
 
+// TODO: https://github.com/mtsoltan/m6/issues/1
+
 bool LiteralProcessor::process_keyword (opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
         this->token_vector.push_back(new ValueToken(OPERATOR, new int(memoized)));
+        // TODO: https://github.com/mtsoltan/m6/issues/6
         this->tokenizer_iterator += strlen(KEYWORDS[memoized - OP_KEYWORD]) + 1;
         return true;
     }

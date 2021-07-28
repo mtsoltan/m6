@@ -55,12 +55,13 @@
 #define FLOAT_NE     ((token_subtype_t) 69)  // __.__e_
 
 // Operator Subtypes
-// TODO: Check how I want to go about those.
+// TODO: https://github.com/mtsoltan/m6/issues/9
 
 typedef uint32_t token_type_t;
 typedef uint8_t token_subtype_t;
 
 
+// TODO: https://github.com/mtsoltan/m6/issues/8
 class Token {
 public:
 

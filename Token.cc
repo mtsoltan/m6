@@ -1,6 +1,5 @@
 #include <Token.h>
 
-// TODO: Overhaul token system (to subclass stuff).
 bool Token::is_digit (char c) {
     return c >= '0' && c <= '9';
 }

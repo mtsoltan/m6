@@ -1,18 +1,5 @@
 #include <TokenTypeChecker.h>
 
-// TODO: Missing grammar features:
-//  1 Hashbang comments.
-//  1 Non-ascii characters in identifiers.
-//  1 String escape sequences.
-//  1 Bigint literals.
-//  3 Numeric separators.
-//  4 String literal closing quote code points.
-//  5 Strings, template literals, and comments.
-//  * Object and array literals (depend on punctuation, will be done during linting).
-//  * Regular expression literals and their modifiers (depend on punctuation, will be done during linting).
-//  * Template literal internals and modifiers (depend on punctuation, will be done during linting).
-//  * Automatic semicolon insersion (depend on punctuation, will be done during linting).
-
 TokenTypeChecker::TokenTypeChecker (int log_handler(const char*, ...)) {
     this->log_handler = log_handler;
 }
@@ -27,6 +14,8 @@ bool TokenTypeChecker::process_symbol () {
     // Reaching this point means that we have a punctuation symbol.
     // First, we need to recognize possible operators based on the first punctuation mark,
     // then compare the second, third, etc. till we settle on a specific operator.
+    // TODO: https://github.com/mtsoltan/m6/issues/7
+
     if (*this->tokenizer_iterator == '=')  {
         // Assignment, arrow, equality, strict equality.
     }
@@ -110,7 +99,6 @@ bool TokenTypeChecker::process_symbol () {
         // Ending curly brace.
     }
 
-    // TODO: When processing quotes or backticks or block comments, just skip to the end inside this function.
     ++this->tokenizer_iterator;
     return true;
 }
