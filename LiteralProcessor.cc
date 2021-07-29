@@ -2,6 +2,22 @@
 
 // TODO: https://github.com/mtsoltan/m6/issues/1
 
+/**
+ * This function is used to let TokenTypeChecker::process_next_token know what we're expecting next.
+ * For example, numbers expect whitespace or operators after them, while operators are okay
+ * with anything being after them.
+ * @param t
+ */
+void LiteralProcessor::expect (const token_type_t t) {
+    // If we expect more than 4 times in a row before unexpecting, then we overflow and crash.
+    this->expecting[this->expecting_iterator++] = t;
+}
+
+token_type_t LiteralProcessor::unexpect () {
+    // If we unexpect when we don't have anything expected, then we underflow and crash.
+    return this->expecting[--this->expecting_iterator];
+}
+
 bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {

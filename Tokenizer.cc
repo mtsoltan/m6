@@ -7,24 +7,6 @@ Tokenizer::Tokenizer (int log_handler (const char*, ...)) : LiteralProcessor(log
 }
 
 /**
- * This function is used to let TokenTypeChecker::process_next_token know what we're expecting next.
- * For example, numbers expect whitespace or operators after them, while operators are okay
- * with anything being after them.
- * @param t
- */
-TokenTypeChecker* TokenTypeChecker::expect (token_type_t t) {
-    // If we expect more than 4 times in a row before unexpecting, then we overflow and crash.
-    this->expecting[this->expecting_iterator++] = t;
-
-    return this;
-}
-
-token_type_t TokenTypeChecker::unexpect () {
-    // If we unexpect when we don't have anything expected, then we underflow and crash.
-    return this->expecting[--this->expecting_iterator];
-}
-
-/**
  * Attempts to tokenize a given string, usually a file contents.
  * @param file_contents
  * @return
