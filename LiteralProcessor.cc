@@ -2,6 +2,11 @@
 
 // TODO: https://github.com/mtsoltan/m6/issues/1
 
+LiteralProcessor::LiteralProcessor (int log_handler (const char*, ...)) : TokenTypeChecker(log_handler) {
+    // Overload the constructor.
+    this->identifier_stack.reserve(IDENTIFIER_STACK_RESERVE);
+}
+
 /**
  * This function is used to let TokenTypeChecker::process_next_token know what we're expecting next.
  * For example, numbers expect whitespace or operators after them, while operators are okay

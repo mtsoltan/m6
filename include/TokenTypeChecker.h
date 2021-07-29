@@ -15,6 +15,8 @@
 // then we specify NO_INCREMENT and put a comment elaborating further.
 #define NO_INCREMENT ;
 
+#define TOKEN_VECTOR_RESERVE         0x00'04'00
+
 class TokenTypeChecker {
 public:
     explicit TokenTypeChecker (int log_handler (const char*, ...));
@@ -22,7 +24,6 @@ public:
 protected:
     int (* log_handler) (const char*, ...);
 
-    std::vector<std::string> identifier_stack;
     std::vector<Token*> token_vector;
 
     std::string tokenizer_string;
