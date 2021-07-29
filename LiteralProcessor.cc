@@ -2,12 +2,12 @@
 
 // TODO: https://github.com/mtsoltan/m6/issues/1
 
-bool LiteralProcessor::process_keyword (opcode_t memoized) {
+bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
         // TODO: https://github.com/mtsoltan/m6/issues/6
         this->token_vector.push_back(new ValueToken(KEYWORD, new opcode_t(memoized)));
-        this->tokenizer_iterator += strlen(KEYWORDS[memoized - OP_KEYWORD]) + 1;
+        this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized)) + 1;
         return true;
     }
 
