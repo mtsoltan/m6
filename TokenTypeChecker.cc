@@ -134,5 +134,5 @@ opcode_t TokenTypeChecker::next_token_is_keyword () {
     std::string::iterator end = this->tokenizer_string.end() - this->tokenizer_iterator > OP_KEYWORD_SIZE ?
                                 this->tokenizer_iterator + OP_KEYWORD_SIZE :
                                 this->tokenizer_string.end();
-    return Token::cstr_to_keyword(std::string(this->tokenizer_iterator, end).c_str());
+    return Token::cstr_to_opcode(std::string(this->tokenizer_iterator, end).c_str());
 }

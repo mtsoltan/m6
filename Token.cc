@@ -25,20 +25,24 @@ bool Token::is_line_terminator (char c) {
     return c == '\r' || c == '\n';
 }
 
-opcode_t Token::cstr_to_keyword(const char c[OP_KEYWORD_SIZE]) {
+opcode_t Token::cstr_to_opcode (const char c[OP_KEYWORD_SIZE]) {
     uint8_t end = 0;
     for (; end < OP_KEYWORD_SIZE; ++end) {
         if (Token::is_whitespace(c[end])) {
             break;
         }
     }
-    for (opcode_t i = OP_KEYWORD; i <= OP_KEYWORD_END; ++i) {
-        if (strncmp(KEYWORDS[i - OP_KEYWORD], c, end) == 0) {
-            return i;
+    for (auto & it : *get_kw_map()) {
+        if (strncmp(it.second, c, end) == 0) {
+            return it.first;
         }
     }
 
     return OPCODE_NOOP;
+}
+
+const char* Token::opcode_to_cstr (const opcode_t keyword_opcode) {
+    return get_kw_map()->at(keyword_opcode);
 }
 
 bool Token::is_punctuation (char c) {

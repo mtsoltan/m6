@@ -71,7 +71,9 @@ public:
     static bool is_whitespace(char c);
     static bool is_punctuation(char c);
     static bool is_line_terminator(char c);
-    static opcode_t cstr_to_keyword(const char c[OP_KEYWORD_SIZE]);
+
+    static opcode_t cstr_to_opcode(const char c[OP_KEYWORD_SIZE]);
+    static const char *opcode_to_cstr(opcode_t keyword_opcode);
 protected:
     token_type_t type;
     token_subtype_t subtype;
