@@ -62,7 +62,6 @@ typedef uint32_t token_type_t;
 typedef uint8_t token_subtype_t;
 
 
-// TODO: https://github.com/mtsoltan/m6/issues/8
 class Token {
 public:
     Token (token_type_t type, token_subtype_t subtype,
