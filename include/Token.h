@@ -3,6 +3,7 @@
 
 #include <cstring>
 
+#include <opcodes.h>
 #include <toplev.h>
 
 #define PUNCTUATION_CHARACTERS "/?.>,<'\":]}[{=+-)(*&^%!`~"
@@ -64,7 +65,6 @@ typedef uint8_t token_subtype_t;
 // TODO: https://github.com/mtsoltan/m6/issues/8
 class Token {
 public:
-
     static bool is_digit(char c);
     static bool is_hexadecimal_digit(char c);
     static bool is_identifier(char c);

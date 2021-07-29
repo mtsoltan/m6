@@ -1,6 +1,8 @@
 #ifndef M6_LITERALPROCESSOR_H
 #define M6_LITERALPROCESSOR_H
 
+#include <cstring>
+
 #include <TokenTypeChecker.h>
 
 class LiteralProcessor : public TokenTypeChecker {

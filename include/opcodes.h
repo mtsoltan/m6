@@ -1,9 +1,9 @@
 #ifndef M6_OPCODES_H
 #define M6_OPCODES_H
 
-#include <cinttypes>
-
 // TODO: https://github.com/mtsoltan/m6/issues/2
+#include <map>
+#include <cinttypes>
 
 #define OP_KEYWORD         ((opcode_t) (1u << 15u))
 #define OP_KEYWORD_END     ((opcode_t) (KEYWORD_END_ - 1))

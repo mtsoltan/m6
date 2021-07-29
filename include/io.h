@@ -6,7 +6,7 @@
 int null_io_handler(const char* a, ...);
 
 #ifdef USE_STDIO
-#include <stdio.h>
+#include <cstdio>
 #define _X()   fflush(stdin)
 #define _F     sprintf
 #define _L     printf
