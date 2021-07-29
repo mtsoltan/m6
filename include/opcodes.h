@@ -201,7 +201,9 @@ enum opcode_enum_t : opcode_t {
     OPCODE_VOLATILE,
 };
 
-std::map<opcode_t, const char*>* get_kw_map ();
+typedef std::map<opcode_t, const char *> keyword_map;
+
+const std::map<opcode_t, const char*>& get_kw_map ();
 
 
 #endif

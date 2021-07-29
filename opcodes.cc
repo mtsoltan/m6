@@ -10,8 +10,8 @@
  * @param index
  * @return
  */
-std::map<opcode_t, const char*>* get_kw_map () {
-    static const std::map<opcode_t, const char*> kw_map {
+const keyword_map& get_kw_map () {
+    static const keyword_map kw_map {
             {OPCODE_BREAK, "break"},
             {OPCODE_CASE, "case"},
             {OPCODE_CATCH, "catch"},
@@ -82,5 +82,5 @@ std::map<opcode_t, const char*>* get_kw_map () {
             {OPCODE_FALSE, "false"},
     };
 
-    return const_cast<std::map<opcode_t, const char *> *>(&kw_map);
+    return kw_map;
 }

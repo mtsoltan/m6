@@ -26,20 +26,17 @@ protected:
 
     std::vector<Token*> token_vector;
 
-    std::string tokenizer_string;
-    std::string::iterator tokenizer_iterator;
-
+    std::string::const_iterator tokenizer_iterator;
+    std::string::const_iterator tokenizer_iterator_begin;
+    std::string::const_iterator tokenizer_iterator_end;
 
     bool process_symbol ();
 
+    [[nodiscard]] bool next_token_is_number () const;
 
-    bool next_token_is_number ();
+    [[nodiscard]] opcode_t next_token_is_keyword () const;
 
-    opcode_t next_token_is_keyword ();
-
-    int64_t get_char_offset ();
-
-
+    [[nodiscard]] int64_t get_char_offset () const;
 };
 
 #endif

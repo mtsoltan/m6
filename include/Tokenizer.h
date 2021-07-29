@@ -9,7 +9,7 @@ public:
 
     std::vector<Token*>& tokenize (const char* file_name);
 
-    std::vector<Token*>& tokenize (std::string str);
+    std::vector<Token*>& tokenize (const std::string& str);
 
 protected:
     bool process_next_token ();

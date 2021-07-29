@@ -104,16 +104,16 @@ bool TokenTypeChecker::process_symbol () {
     return true;
 }
 
-int64_t TokenTypeChecker::get_char_offset () {
-    if (this->tokenizer_iterator == this->tokenizer_string.end() || *this->tokenizer_iterator == '\0') {
+int64_t TokenTypeChecker::get_char_offset () const {
+    if (this->tokenizer_iterator == this->tokenizer_iterator_end || *this->tokenizer_iterator == '\0') {
         return NOT_FOUND;  // This whole function needs to be signed, because NOT_FOUND is negative.
     }
 
-    return this->tokenizer_iterator - this->tokenizer_string.begin();
+    return this->tokenizer_iterator - this->tokenizer_iterator_begin;
 }
 
-bool TokenTypeChecker::next_token_is_number () {
-    std::string::iterator temp = this->tokenizer_iterator;
+bool TokenTypeChecker::next_token_is_number () const {
+    std::string::const_iterator temp = this->tokenizer_iterator;
 
     // If it starts with a negative sign, then we ignore it, since it might very well be a number.
     if (*temp == '-') {
@@ -131,9 +131,6 @@ bool TokenTypeChecker::next_token_is_number () {
     return Token::is_digit(*temp);
 }
 
-opcode_t TokenTypeChecker::next_token_is_keyword () {
-    std::string::iterator end = this->tokenizer_string.end() - this->tokenizer_iterator > OP_KEYWORD_SIZE ?
-                                this->tokenizer_iterator + OP_KEYWORD_SIZE :
-                                this->tokenizer_string.end();
-    return Token::cstr_to_opcode(std::string(this->tokenizer_iterator, end).c_str());
+opcode_t TokenTypeChecker::next_token_is_keyword () const {
+    return Token::cstr_to_opcode(&(*this->tokenizer_iterator));
 }

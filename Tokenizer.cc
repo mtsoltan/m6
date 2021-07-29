@@ -11,9 +11,10 @@ Tokenizer::Tokenizer (int log_handler (const char*, ...)) : LiteralProcessor(log
  * @param file_contents
  * @return
  */
-std::vector<Token*>& Tokenizer::tokenize (std::string str) {
+std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
     this->tokenizer_iterator = str.begin();
-    this->tokenizer_string = str;
+    this->tokenizer_iterator_begin = str.begin();
+    this->tokenizer_iterator_end = str.end();
 
     // Attempt to process the next token forever till process_next_token returns false.
     // It will return false when done or when it encounters an error.
@@ -40,7 +41,7 @@ std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
 
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
-        std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        const std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
         file.close();
         this->log_handler("We now have the contents:\n%s\n", str.c_str());

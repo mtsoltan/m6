@@ -27,7 +27,7 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
         // TODO: https://github.com/mtsoltan/m6/issues/6
-        std::string::iterator original_iterator = this->tokenizer_iterator;
+        std::string::const_iterator original_iterator = this->tokenizer_iterator;
         this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized)) + 1;
         this->token_vector.push_back(
                 new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
@@ -45,7 +45,7 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
  * @return
  */
 bool LiteralProcessor::process_identifier () {
-    std::string::iterator original_iterator = this->tokenizer_iterator;
+    std::string::const_iterator original_iterator = this->tokenizer_iterator;
 
     // An identifier consists only of identifier characters and digit characters.
     for (; this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
@@ -85,7 +85,7 @@ bool LiteralProcessor::process_identifier () {
  * @return
  */
 bool LiteralProcessor::process_number_literal () {
-    std::string::iterator original_iterator = this->tokenizer_iterator;
+    std::string::const_iterator original_iterator = this->tokenizer_iterator;
 
     token_subtype_t subtype = UNDEFINED;
 
@@ -146,7 +146,7 @@ bool LiteralProcessor::process_number_literal () {
         if (Token::is_digit(*this->tokenizer_iterator)) {
             accumulator *= subtype;
             decimal_accumulator *= INT_DEC;
-            auto temp = *this->tokenizer_iterator - '0';
+            uint8_t temp = *this->tokenizer_iterator - '0';
             accumulator += temp;
             decimal_accumulator += temp;
 
@@ -169,7 +169,7 @@ bool LiteralProcessor::process_number_literal () {
         // If we find a hexadecimal digit in a hexadecimal number, we convert and accumulate.
         if (Token::is_hexadecimal_digit(*this->tokenizer_iterator) && subtype == INT_HEX) {
             accumulator *= subtype;
-            auto temp = *this->tokenizer_iterator - 'a' + 10;
+            uint8_t temp = *this->tokenizer_iterator - 'a' + 10;
             accumulator += temp;
         }
 
@@ -214,7 +214,7 @@ bool LiteralProcessor::process_number_literal () {
 
     // If we're on float we add accumulator as the decimal fraction of accumulator_f.
     if (subtype & FLOAT_N) {
-        auto temp = (double) accumulator;
+        double temp = accumulator;
         while (temp > 1) temp /= 10;
         accumulator_f += temp;
         accumulator_f *= sign;

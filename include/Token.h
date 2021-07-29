@@ -73,7 +73,7 @@ typedef uint64_t token_subtype_t;
 class Token {
 public:
     Token (token_type_t type, token_subtype_t subtype,
-           std::string::iterator start, std::string::iterator end);
+           std::string::const_iterator start, std::string::const_iterator end);
 
     static bool is_digit (char c);
 
@@ -87,26 +87,26 @@ public:
 
     static bool is_line_terminator (char c);
 
-    static opcode_t cstr_to_opcode (const char c[OP_KEYWORD_SIZE]);
+    static opcode_t cstr_to_opcode (const char* c);
 
     static const char* opcode_to_cstr (opcode_t keyword_opcode);
 
 protected:
-    token_type_t type;
-    token_subtype_t subtype;
-    std::string::iterator start;  // Inclusive.
-    std::string::iterator end;  // Not inclusive.
+    const token_type_t type;
+    const token_subtype_t subtype;
+    const std::string::const_iterator start;  // Inclusive.
+    const std::string::const_iterator end;  // Not inclusive.
 };
 
 
 class ValueToken : public Token {
 public:
     ValueToken (token_type_t type, token_subtype_t subtype,
-                std::string::iterator start, std::string::iterator end,
+                std::string::const_iterator start, std::string::const_iterator end,
                 void* value_ptr);
 
 protected:
-    void* value_ptr;
+    void* const value_ptr;
 };
 
 #endif
