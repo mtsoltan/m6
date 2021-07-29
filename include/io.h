@@ -3,10 +3,12 @@
 
 #include <config.h>
 
-int null_io_handler(const char* a, ...);
+int null_io_handler (const char* a, ...);
 
 #ifdef USE_STDIO
+
 #include <cstdio>
+
 #define _X()   fflush(stdin)
 #define _F     sprintf
 #define _L     printf

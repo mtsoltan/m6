@@ -133,7 +133,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_LET,  // <-- Reserved in SM only.
     OPCODE_STATIC,
 
-    OPCODE_IN =  OP_KEYWORD | OP_KW_OPERATOR | OP_KW_BINARY,
+    OPCODE_IN = OP_KEYWORD | OP_KW_OPERATOR | OP_KW_BINARY,
     OPCODE_OF,  // <-- This one is not reserved, but has special usage inside a for..of loop.
     OPCODE_INSTANCEOF,
 

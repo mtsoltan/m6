@@ -20,7 +20,7 @@
 
 class TokenTypeChecker {
 public:
-    explicit TokenTypeChecker (int log_handler(const char*, ...));
+    explicit TokenTypeChecker (int log_handler (const char*, ...));
 
 protected:
     int (* log_handler) (const char*, ...);
@@ -31,20 +31,21 @@ protected:
     std::string tokenizer_string;
     std::string::iterator tokenizer_iterator;
 
-    token_type_t expecting[EXPECTING_BUFFER_N]{};
+    token_type_t expecting[EXPECTING_BUFFER_N] {};
     uint8_t expecting_iterator = 0;
 
 
-    bool process_symbol();
+    bool process_symbol ();
 
-    TokenTypeChecker* expect(token_type_t t);
+    TokenTypeChecker* expect (token_type_t t);
 
-    bool next_token_is_number();
-    opcode_t next_token_is_keyword();
+    bool next_token_is_number ();
 
-    int64_t get_char_offset();
+    opcode_t next_token_is_keyword ();
 
-    token_type_t unexpect();
+    int64_t get_char_offset ();
+
+    token_type_t unexpect ();
 
 };
 

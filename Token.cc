@@ -32,7 +32,7 @@ opcode_t Token::cstr_to_opcode (const char c[OP_KEYWORD_SIZE]) {
             break;
         }
     }
-    for (auto & it : *get_kw_map()) {
+    for (auto& it : *get_kw_map()) {
         if (strncmp(it.second, c, end) == 0) {
             return it.first;
         }
@@ -54,10 +54,9 @@ bool Token::is_punctuation (char c) {
     return false;
 }
 
-Token::Token(token_type_t type, token_subtype_t subtype,
-             std::string::iterator start, std::string::iterator end
-             ) : type(type), subtype(subtype), start(start), end(end) {}
+Token::Token (token_type_t type, token_subtype_t subtype, std::string::iterator start, std::string::iterator end)
+        : type(type), subtype(subtype), start(start), end(end) {}
 
-ValueToken::ValueToken(token_type_t type, token_subtype_t subtype,
-                       std::string::iterator start, std::string::iterator end,
-                       void *value_ptr) : Token(type, subtype, start, end), value_ptr(value_ptr) {}
+ValueToken::ValueToken (token_type_t type, token_subtype_t subtype, std::string::iterator start,
+                        std::string::iterator end, void* value_ptr) : Token(type, subtype, start, end),
+                                                                      value_ptr(value_ptr) {}

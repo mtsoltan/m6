@@ -5,12 +5,14 @@
 
 class Tokenizer : public LiteralProcessor {
 public:
-    explicit Tokenizer (int log_handler(const char*, ...));
+    explicit Tokenizer (int log_handler (const char*, ...));
+
     std::vector<Token*>& tokenize (const char* file_name);
+
     std::vector<Token*>& tokenize (std::string str);
 
 protected:
-    bool process_next_token();
+    bool process_next_token ();
 };
 
 

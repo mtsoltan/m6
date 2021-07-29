@@ -17,17 +17,17 @@
 // Value Token Types
 
 #define IDENTIFIER   ((token_type_t) (1u << 1u) | VALUE_TOKEN)  // Must start with an identifier character.
-                                                                // Must consist only of identifier characters and digits.
+// Must consist only of identifier characters and digits.
 #define NUMBER       ((token_type_t) (1u << 2u) | VALUE_TOKEN)  // Must start with a digit or a negative sign or a dot.
-                                                                // Must be a valid number subtype.
+// Must be a valid number subtype.
 #define BOOLEAN      ((token_type_t) (1u << 3u) | VALUE_TOKEN)  // True and false keywords.
 #define KEYWORD      ((token_type_t) (1u << 4u) | VALUE_TOKEN)  // Loops, conditions, functions, etc.
 #define OPERATOR     ((token_type_t) (1u << 5u) | VALUE_TOKEN)  // Must start with a punctuation.
-                                                                // Must be a valid opcode.
-                                                                // Unary and binary operator keywords belong here!
+// Must be a valid opcode.
+// Unary and binary operator keywords belong here!
 #define WHITESPACE   ((token_type_t) (1u << 6u) | VALUE_TOKEN)  // Must start with whitespace and contain only whitespace.
-                                                                // These are not tokenized, but are defined because in certain cases,
-                                                                // we have to expect them.
+// These are not tokenized, but are defined because in certain cases,
+// we have to expect them.
 #define EOL          ((token_type_t) (1u << 7u) | VALUE_TOKEN)  // EOL and EOS are independent tokens, they only consist of one EOL
 #define EOS          ((token_type_t) (1u << 8u) | VALUE_TOKEN)  // or EOS character.
 
@@ -65,17 +65,25 @@ typedef uint8_t token_subtype_t;
 // TODO: https://github.com/mtsoltan/m6/issues/8
 class Token {
 public:
-    Token(token_type_t type, token_subtype_t subtype,
-            std::string::iterator start, std::string::iterator end);
-    static bool is_digit(char c);
-    static bool is_hexadecimal_digit(char c);
-    static bool is_identifier(char c);
-    static bool is_whitespace(char c);
-    static bool is_punctuation(char c);
-    static bool is_line_terminator(char c);
+    Token (token_type_t type, token_subtype_t subtype,
+           std::string::iterator start, std::string::iterator end);
 
-    static opcode_t cstr_to_opcode(const char c[OP_KEYWORD_SIZE]);
-    static const char *opcode_to_cstr(opcode_t keyword_opcode);
+    static bool is_digit (char c);
+
+    static bool is_hexadecimal_digit (char c);
+
+    static bool is_identifier (char c);
+
+    static bool is_whitespace (char c);
+
+    static bool is_punctuation (char c);
+
+    static bool is_line_terminator (char c);
+
+    static opcode_t cstr_to_opcode (const char c[OP_KEYWORD_SIZE]);
+
+    static const char* opcode_to_cstr (opcode_t keyword_opcode);
+
 protected:
     token_type_t type;
     token_subtype_t subtype;
@@ -86,9 +94,10 @@ protected:
 
 class ValueToken : public Token {
 public:
-    ValueToken(token_type_t type, token_subtype_t subtype,
-               std::string::iterator start, std::string::iterator end,
-               void *value_ptr);
+    ValueToken (token_type_t type, token_subtype_t subtype,
+                std::string::iterator start, std::string::iterator end,
+                void* value_ptr);
+
 protected:
     void* value_ptr;
 };

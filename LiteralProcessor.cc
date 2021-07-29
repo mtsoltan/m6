@@ -6,8 +6,11 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
         // TODO: https://github.com/mtsoltan/m6/issues/6
-        this->token_vector.push_back(new ValueToken(KEYWORD, new opcode_t(memoized)));
+        std::string::iterator original_iterator = this->tokenizer_iterator;
         this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized)) + 1;
+        this->token_vector.push_back(
+                new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                               new opcode_t(memoized)));
         return true;
     }
 
@@ -24,7 +27,7 @@ bool LiteralProcessor::process_identifier () {
     std::string::iterator original_iterator = this->tokenizer_iterator;
 
     // An identifier consists only of identifier characters and digit characters.
-    for (;this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
+    for (; this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
         if (!Token::is_identifier(*this->tokenizer_iterator) && !Token::is_digit(*this->tokenizer_iterator)) {
             break;
         }
@@ -43,7 +46,9 @@ bool LiteralProcessor::process_identifier () {
     }
 
     // Create a token with the identifier index in the identifier stack.
-    this->token_vector.push_back(new ValueToken(IDENTIFIER, new uint64_t(value)));
+    this->token_vector.push_back(
+            new ValueToken(IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                           new uint64_t(value)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
     // we have reached something that isn't part of this identifier.
@@ -59,7 +64,9 @@ bool LiteralProcessor::process_identifier () {
  * @return
  */
 bool LiteralProcessor::process_number_literal () {
-    auto subtype = (token_subtype_t) UNDEFINED;
+    std::string::iterator original_iterator = this->tokenizer_iterator;
+
+    token_subtype_t subtype = UNDEFINED;
 
     int64_t accumulator = 0;
     int64_t decimal_accumulator = 0;  // For a special case in which a number starts with zero yet is decimal.
@@ -67,7 +74,7 @@ bool LiteralProcessor::process_number_literal () {
     int8_t sign = 1;
     bool strict_oct = false;
 
-    for (;this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
+    for (; this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
         // If it starts with a negative sign, we set the sign to -1.
         // We will multiply by this sign at the very end.
         if (*this->tokenizer_iterator == '-' && subtype == UNDEFINED) {
@@ -171,8 +178,8 @@ bool LiteralProcessor::process_number_literal () {
             break;
         }
 
-        // If we find a non-identifier, we have reached the end of the number and we break.
-        if (!Token::is_identifier(*this->tokenizer_iterator)) {
+        // If we find a non-identifier, non-dot, we have reached the end of the number and we break.
+        if (!Token::is_identifier(*this->tokenizer_iterator) && *this->tokenizer_iterator != '.') {
             // We do not increment here, as this thing we just found isn't part of the number,
             // but rather a part of the next token.
             NO_INCREMENT
@@ -190,10 +197,14 @@ bool LiteralProcessor::process_number_literal () {
         while (temp > 1) temp /= 10;
         accumulator_f += temp;
         accumulator_f *= sign;
-        this->token_vector.push_back(new ValueToken(NUMBER, new double(accumulator_f), subtype));
+        this->token_vector.push_back(
+                new ValueToken(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                               new double(accumulator_f)));
     } else {
         accumulator *= sign;
-        this->token_vector.push_back(new ValueToken(NUMBER, new int64_t(accumulator), subtype));
+        this->token_vector.push_back(
+                new ValueToken(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                               new int64_t(accumulator)));
     }
 
     return true;

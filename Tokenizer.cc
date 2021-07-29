@@ -1,7 +1,7 @@
 #include <Tokenizer.h>
 
 
-Tokenizer::Tokenizer (int log_handler(const char*, ...)) : LiteralProcessor(log_handler) {
+Tokenizer::Tokenizer (int log_handler (const char*, ...)) : LiteralProcessor(log_handler) {
     // Overload the constructor.
     this->expect(ANYTHING);
 }
@@ -50,7 +50,7 @@ std::vector<Token*>& Tokenizer::tokenize (std::string str) {
  * @return
  */
 std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
-    std::ifstream file (file_name , std::ios::binary | std::ios::in);
+    std::ifstream file(file_name, std::ios::binary | std::ios::in);
 
     if (file.fail()) {
         throw ERR_IFSTREAM_FAILED;
@@ -58,8 +58,7 @@ std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
 
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
-        std::string str((std::istreambuf_iterator<char>(file)),
-                        std::istreambuf_iterator<char>());
+        std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
         file.close();
         this->log_handler("We now have the contents:\n%s\n", str.c_str());
@@ -98,14 +97,14 @@ bool Tokenizer::process_next_token () {
 
     // If it's an EOL or EOS, we just skip past it and empalce it.
     if (Token::is_line_terminator(*this->tokenizer_iterator) && (expected_type & EOL)) {
-        this->token_vector.push_back(new ValueToken(EOL, nullptr));
-        ++this->tokenizer_iterator;
+        this->token_vector.push_back(
+                new ValueToken(EOL, UNDEFINED, this->tokenizer_iterator, ++this->tokenizer_iterator, nullptr));
         rv = true;
         goto expect;
     }
     if (*this->tokenizer_iterator == ';' && (expected_type & EOS)) {
-        this->token_vector.push_back(new ValueToken(EOS, nullptr));
-        ++this->tokenizer_iterator;
+        this->token_vector.push_back(
+                new ValueToken(EOS, UNDEFINED, this->tokenizer_iterator, ++this->tokenizer_iterator, nullptr));
         rv = true;
         goto expect;
     }
