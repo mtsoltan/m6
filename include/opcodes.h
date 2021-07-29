@@ -65,7 +65,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_ADD = OP_ARITHMETIC,
     OPCODE_SUB,
     OPCODE_MUL,
-    OPCODE_DIV,  // Divide is also the regex starter / ender.
+    OPCODE_DIV,  // Divide is also the regex start / end.
     OPCODE_REM,
     OPCODE_PWR,
 

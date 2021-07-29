@@ -90,7 +90,8 @@ protected:
 
 class RangeToken {
 public:
-    RangeToken(token_type_t type, std::string::iterator start, std::string::iterator end, token_subtype_t subtype = UNDEFINED);
+    RangeToken(token_type_t type, std::string::iterator start, std::string::iterator end,
+            token_subtype_t subtype = UNDEFINED);
 protected:
     token_type_t type;
     token_subtype_t subtype;

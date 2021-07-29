@@ -12,14 +12,14 @@ Tokenizer::Tokenizer (int log_handler(const char*, ...)) : LiteralProcessor(log_
  * with anything being after them.
  * @param t
  */
-TokenTypeChecker* TokenTypeChecker::expect(token_type_t t) {
+TokenTypeChecker* TokenTypeChecker::expect (token_type_t t) {
     // If we expect more than 4 times in a row before unexpecting, then we overflow and crash.
     this->expecting[this->expecting_iterator++] = t;
 
     return this;
 }
 
-token_type_t TokenTypeChecker::unexpect() {
+token_type_t TokenTypeChecker::unexpect () {
     // If we unexpect when we don't have anything expected, then we underflow and crash.
     return this->expecting[--this->expecting_iterator];
 }
@@ -52,12 +52,12 @@ std::vector<Token*>& Tokenizer::tokenize (std::string str) {
 std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
     std::ifstream file (file_name , std::ios::binary | std::ios::in);
 
-    if(file.fail()) {
+    if (file.fail()) {
         throw ERR_IFSTREAM_FAILED;
     }
 
     if (file.is_open()) {
-        file.seekg (0, std::ios::beg);
+        file.seekg(0, std::ios::beg);
         std::string str((std::istreambuf_iterator<char>(file)),
                         std::istreambuf_iterator<char>());
 

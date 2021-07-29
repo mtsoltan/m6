@@ -13,7 +13,7 @@ int null_io_handler(const char* a, ...);
 #endif
 
 #ifndef _X
-#define _X() do {} while(0)
+#define _X() do {} while (0)
 #endif
 #ifndef _F
 #define _F null_io_handler
