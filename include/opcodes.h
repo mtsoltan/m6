@@ -2,12 +2,13 @@
 #define M6_OPCODES_H
 
 // TODO: https://github.com/mtsoltan/m6/issues/2
+// TODO: https://github.com/mtsoltan/m6/issues/15
 #include <map>
 #include <cinttypes>
 
 #define OP_KEYWORD         ((opcode_t) (1u << 15u))
-#define OP_KEYWORD_END     ((opcode_t) (KEYWORD_END_ - 1))
-#define OP_KEYWORD_SIZE    (sizeof("synchronized") / sizeof(char))
+#define OP_KEYWORD_SIZE    ((uint8_t)(sizeof("synchronized") / sizeof(char)))
+
 
 #define OP_UNARY_L         ((opcode_t) (1u << 14u))
 #define OP_UNARY_R         ((opcode_t) (1u << 13u))
@@ -20,10 +21,25 @@
 #define OP_LOGICAL         ((opcode_t) (3u << 10u))
 #define OP_START_END       ((opcode_t) (1u << 9u))
 
-typedef uint16_t opcode_t;
+
+#define OP_KW_BINARY  ((opcode_t) (3u << 12u))
+#define OP_KW_UNARY   ((opcode_t) (2u << 12u))  // 0-nary operators should always be in statements of their own.
+#define OP_KW_0NARY   ((opcode_t) (1u << 12u))  // They include the debugger, and control flow keywords.
+
+#define OP_KW_BLOCK        ((opcode_t) (15u << 10u))
+#define OP_KW_BLOCK_EXT    ((opcode_t) (14u << 10u))
+#define OP_KW_UNUSED       ((opcode_t) (13u << 10u))
+#define OP_KW_BOOLEAN      ((opcode_t) (12u << 10u))
+#define OP_KW_MISCLITERAL  ((opcode_t) (11u << 10u))
+#define OP_KW_DECLARE      ((opcode_t) (9u << 10u))
+#define OP_KW_OPERATOR     ((opcode_t) (1u << 10u))
+
+typedef uint64_t opcode_t;  // We only use 15 bits, but for signedness.
 
 enum opcode_enum_t : opcode_t {
     OPCODE_NOOP,
+
+    // OPERATORS
 
     OPCODE_QMARK,
     OPCODE_COLON,  // Used in trinary operators, cases, labels, and object property declaration.
@@ -103,55 +119,72 @@ enum opcode_enum_t : opcode_t {
     OPCODE_COMMENT2,
     OPCODE_COMMENTL,
 
-    // TODO: https://github.com/mtsoltan/m6/issues/2#issuecomment-887923183
-    OPCODE_BREAK = OP_KEYWORD,  // Permanently reserved.
-    OPCODE_CASE,
-    OPCODE_CATCH,
-    OPCODE_CLASS,
-    OPCODE_CONST,
-    OPCODE_CONTINUE,
-    OPCODE_DEBUGGER,
-    OPCODE_DEFAULT,
-    OPCODE_DELETE,
-    OPCODE_DO,
-    OPCODE_ELSE,
-    OPCODE_EXPORT,
-    OPCODE_EXTENDS,
-    OPCODE_FINALLY,
-    OPCODE_FOR,
-    OPCODE_FUNCTION,
-    OPCODE_IF,
-    OPCODE_IMPORT,
-    OPCODE_IN,
-    OPCODE_INSTANCEOF,
-    OPCODE_NEW,
-    OPCODE_RETURN,
+    // KEYWORDS
+
+    // Used by the language so cannot be used as identifiers.
+    OPCODE_THIS = OP_KEYWORD | OP_KW_MISCLITERAL,
     OPCODE_SUPER,
-    OPCODE_SWITCH,
-    OPCODE_THIS,
-    OPCODE_THROW,
-    OPCODE_TRY,
-    OPCODE_TYPEOF,
+    OPCODE_NULL,
+    OPCODE_TRUE = OP_KEYWORD | OP_KW_BOOLEAN,
+    OPCODE_FALSE,
+
+    // Permanently reserved.
+    OPCODE_CONST = OP_KEYWORD | OP_KW_DECLARE | OP_KW_UNARY,
     OPCODE_VAR,
-    OPCODE_VOID,
-    OPCODE_WHILE,
-    OPCODE_WITH,
+    OPCODE_LET,  // <-- Reserved in SM only.
+    OPCODE_STATIC,
+
+    OPCODE_IN =  OP_KEYWORD | OP_KW_OPERATOR | OP_KW_BINARY,
+    OPCODE_OF,  // <-- This one is not reserved, but has special usage inside a for..of loop.
+    OPCODE_INSTANCEOF,
+
+    OPCODE_DELETE = OP_KEYWORD | OP_KW_OPERATOR | OP_KW_UNARY,
+    OPCODE_NEW,
+    OPCODE_EXPORT,
+    OPCODE_IMPORT,
+    OPCODE_TYPEOF,
     OPCODE_YIELD,
+    OPCODE_AWAIT,  // <-- Future reserved in module code.
+    OPCODE_VOID,
 
-    OPCODE_ENUM,  // Future permanently reserved.
+    OPCODE_BREAK = OP_KEYWORD | OP_KW_OPERATOR | OP_KW_0NARY,
+    OPCODE_CONTINUE,  // Break, continue, return, throw can be both unary or 0-nary.
+    OPCODE_RETURN,
+    OPCODE_THROW,
+    OPCODE_DEBUGGER,  // Debugger is 0-nary only.
 
-    OPCODE_IMPLEMENTS,  // Future strict mode reserved.
+    OPCODE_TRY = OP_KEYWORD | OP_KW_BLOCK,
+    OPCODE_IF,
+    OPCODE_SWITCH,
+    OPCODE_DO,
+    OPCODE_FOR,
+    OPCODE_WHILE,
+    OPCODE_FUNCTION,
+
+    OPCODE_CLASS,
+    OPCODE_EXTENDS,
+
+    OPCODE_CASE,
+    OPCODE_DEFAULT,
+
+    OPCODE_FINALLY = OP_KEYWORD | OP_KW_BLOCK_EXT,
+    OPCODE_CATCH,
+    OPCODE_ELSE,
+
+    OPCODE_ENUM = OP_KEYWORD | OP_KW_UNUSED,  // <-- Future permanently reserved.
+
+    OPCODE_WITH,
+
+    // Future strict mode reserved.
+    OPCODE_IMPLEMENTS,
     OPCODE_INTERFACE,
-    OPCODE_LET,
     OPCODE_PACKAGE,
     OPCODE_PRIVATE,
     OPCODE_PROTECTED,
     OPCODE_PUBLIC,
-    OPCODE_STATIC,
 
-    OPCODE_AWAIT,  // Future reserved in module code.
-
-    OPCODE_ABSTRACT,  // Reserved by older standards.
+    // Reserved by older standards.
+    OPCODE_ABSTRACT,
     OPCODE_BOOLEAN,
     OPCODE_BYTE,
     OPCODE_CHAR,
@@ -167,82 +200,9 @@ enum opcode_enum_t : opcode_t {
     OPCODE_THROWS,
     OPCODE_TRANSIENT,
     OPCODE_VOLATILE,
-
-    OPCODE_NULL,  // Used by the language so cannot be used as identifiers.
-    OPCODE_TRUE,
-    OPCODE_FALSE,
-    KEYWORD_END_,
-
 };
 
-const char KEYWORDS[OP_KEYWORD_END - OP_KEYWORD + 1][OP_KEYWORD_SIZE] = {
-        "break",
-        "case",
-        "catch",
-        "class",
-        "const",
-        "continue",
-        "debugger",
-        "default",
-        "delete",
-        "do",
-        "else",
-        "export",
-        "extends",
-        "finally",
-        "for",
-        "function",
-        "if",
-        "import",
-        "in",
-        "instanceof",
-        "new",
-        "return",
-        "super",
-        "switch",
-        "this",
-        "throw",
-        "try",
-        "typeof",
-        "var",
-        "void",
-        "while",
-        "with",
-        "yield",
+std::map<opcode_t, const char*>* get_kw_map ();
 
-        "enum",
-
-        "implements",
-        "interface",
-        "let",
-        "package",
-        "private",
-        "protected",
-        "public",
-        "static",
-
-        "await",
-
-        "abstract",
-        "boolean",
-        "byte",
-        "char",
-        "double",
-        "final",
-        "float",
-        "goto",
-        "int",
-        "long",
-        "native",
-        "short",
-        "synchronized",
-        "throws",
-        "transient",
-        "volatile",
-
-        "null",
-        "true",
-        "false",
-};
 
 #endif

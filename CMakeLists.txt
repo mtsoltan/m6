@@ -3,11 +3,13 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(m6)
 
-add_library(cfiles Tokenizer.cc LiteralProcessor.cc TokenTypeChecker.cc Token.cc)
+add_library(cfiles
+        Tokenizer.cc LiteralProcessor.cc TokenTypeChecker.cc Token.cc
+        io.cc opcodes.cc errors.cc)
 
 target_include_directories(cfiles PUBLIC include)
 
-add_executable(m6 main.cc errors.cc)
+add_executable(m6 main.cc)
 
 target_link_libraries (m6 cfiles)
 
