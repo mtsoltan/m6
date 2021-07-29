@@ -1,7 +1,6 @@
 #ifndef M6_OPCODES_H
 #define M6_OPCODES_H
 
-// TODO: https://github.com/mtsoltan/m6/issues/2
 // TODO: https://github.com/mtsoltan/m6/issues/15
 #include <map>
 #include <cinttypes>
