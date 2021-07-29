@@ -43,6 +43,8 @@
 
 
 // Common Subtypes
+// Identifiers, booleans, whitespace, eol, eos, string, template,
+// regex, and comment all have no subtypes and will always use this.
 #define UNDEFINED    ((token_subtype_t)  0)
 
 // Number Subtypes
@@ -55,11 +57,17 @@
 #define FLOAT_N      ((token_subtype_t) 68)  // ___.___
 #define FLOAT_NE     ((token_subtype_t) 69)  // __.__e_
 
-// Operator Subtypes
-// TODO: https://github.com/mtsoltan/m6/issues/9
+// Operator and keyword subtypes are present in opcodes.h:
+// - OP_ASSIGNMENT to OP_START_END
+// - OP_KW_BLOCK to OP_KW_OPERATOR
 
-typedef uint32_t token_type_t;
-typedef uint8_t token_subtype_t;
+// Only 32 are used for token_type_t, but we lose nothing.
+// Only 8 are used for token_subtype_t in everything but operators.
+// uint8_t would've been fine too, but we're too lazy to rewrite the defines in opcodes.h
+// for operator subtypes.
+// We rather just use them as is.
+typedef uint64_t token_type_t;
+typedef uint64_t token_subtype_t;
 
 
 class Token {
