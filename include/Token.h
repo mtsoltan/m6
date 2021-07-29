@@ -65,6 +65,8 @@ typedef uint8_t token_subtype_t;
 // TODO: https://github.com/mtsoltan/m6/issues/8
 class Token {
 public:
+    Token(token_type_t type, token_subtype_t subtype,
+            std::string::iterator start, std::string::iterator end);
     static bool is_digit(char c);
     static bool is_hexadecimal_digit(char c);
     static bool is_identifier(char c);
@@ -77,29 +79,18 @@ public:
 protected:
     token_type_t type;
     token_subtype_t subtype;
+    std::string::iterator start;  // Inclusive.
+    std::string::iterator end;  // Not inclusive.
 };
 
 
 class ValueToken : public Token {
 public:
-    ValueToken(token_type_t type, void* value_ptr, token_subtype_t subtype = UNDEFINED);
+    ValueToken(token_type_t type, token_subtype_t subtype,
+               std::string::iterator start, std::string::iterator end,
+               void *value_ptr);
 protected:
-    token_type_t type;
-    token_subtype_t subtype;
     void* value_ptr;
 };
-
-
-class RangeToken : public Token {
-public:
-    RangeToken(token_type_t type, std::string::iterator start, std::string::iterator end,
-            token_subtype_t subtype = UNDEFINED);
-protected:
-    token_type_t type;
-    token_subtype_t subtype;
-    std::string::iterator start;  // Inclusive.
-    std::string::iterator end;  // Not inclusive.
-};
-
 
 #endif
