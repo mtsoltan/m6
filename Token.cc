@@ -52,7 +52,7 @@ bool Token::is_punctuation (char c) {
 
 
 ValueToken::ValueToken(token_type_t type, void* value_ptr,
-                       token_subtype_t subtype) : type(type), value_ptr(value_ptr), subtype(subtype) {};
+                       token_subtype_t subtype) : Token(), type(type), value_ptr(value_ptr), subtype(subtype) {}
 
 RangeToken::RangeToken(token_type_t type, std::string::iterator start, std::string::iterator end,
-                       token_subtype_t subtype) : type(type), start(start), end(end), subtype(subtype) {}
+                       token_subtype_t subtype) : Token(), type(type), start(start), end(end), subtype(subtype) {}
