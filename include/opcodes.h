@@ -5,33 +5,33 @@
 #include <map>
 #include <cinttypes>
 
-#define OP_KEYWORD         ((opcode_t) (1u << 15u))
+#define OP_KEYWORD         ((opcode_t) ( 1u << 15u))
 #define OP_KEYWORD_SIZE    ((uint8_t)(sizeof("synchronized") / sizeof(char)))
 
 
-#define OP_UNARY_L         ((opcode_t) (1u << 14u))
-#define OP_UNARY_R         ((opcode_t) (1u << 13u))
+#define OP_UNARY_L         ((opcode_t) ( 1u << 14u))
+#define OP_UNARY_R         ((opcode_t) ( 1u << 13u))
 #define OP_UNARY           ((opcode_t) (OP_UNARY_L | OP_UNARY_R))  // What is not unary is binary.
 
-#define OP_ASSIGNMENT      ((opcode_t) (7u << 10u))
-#define OP_COMPARISON      ((opcode_t) (6u << 10u))
-#define OP_ARITHMETIC      ((opcode_t) (5u << 10u))
-#define OP_BITWISE         ((opcode_t) (4u << 10u))
-#define OP_LOGICAL         ((opcode_t) (3u << 10u))
-#define OP_START_END       ((opcode_t) (1u << 9u))
+#define OP_ASSIGNMENT      ((opcode_t) ( 7u << 10u))
+#define OP_COMPARISON      ((opcode_t) ( 6u << 10u))
+#define OP_ARITHMETIC      ((opcode_t) ( 5u << 10u))
+#define OP_BITWISE         ((opcode_t) ( 4u << 10u))
+#define OP_LOGICAL         ((opcode_t) ( 3u << 10u))
+#define OP_START_END       ((opcode_t) ( 1u <<  9u))
 
 
-#define OP_KW_BINARY  ((opcode_t) (3u << 12u))
-#define OP_KW_UNARY   ((opcode_t) (2u << 12u))  // 0-nary operators should always be in statements of their own.
-#define OP_KW_0NARY   ((opcode_t) (1u << 12u))  // They include the debugger, and control flow keywords.
+#define OP_KW_BINARY       ((opcode_t) ( 3u << 12u))
+#define OP_KW_UNARY        ((opcode_t) ( 2u << 12u))  // 0-nary operators should always be in statements of their own.
+#define OP_KW_0NARY        ((opcode_t) ( 1u << 12u))  // They include the debugger, and control flow keywords.
 
 #define OP_KW_BLOCK        ((opcode_t) (15u << 10u))
 #define OP_KW_BLOCK_EXT    ((opcode_t) (14u << 10u))
 #define OP_KW_UNUSED       ((opcode_t) (13u << 10u))
 #define OP_KW_BOOLEAN      ((opcode_t) (12u << 10u))
 #define OP_KW_MISCLITERAL  ((opcode_t) (11u << 10u))
-#define OP_KW_DECLARE      ((opcode_t) (9u << 10u))
-#define OP_KW_OPERATOR     ((opcode_t) (1u << 10u))
+#define OP_KW_DECLARE      ((opcode_t) ( 9u << 10u))
+#define OP_KW_OPERATOR     ((opcode_t) ( 1u << 10u))
 
 typedef uint64_t opcode_t;  // We only use 15 bits, but for signedness.
 
