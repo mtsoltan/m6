@@ -21,18 +21,41 @@ bool TokenTypeChecker::process_symbol () {
     // We check how many symbols are in a row.
     // If more than 4, we set the maximum per single operator to 4.
     // At the end of this loop, the token iterator will be on the character after the possible operator.
-    uint8_t ecx = MAX_OPERATOR_SIZE;
-    while (Token::is_punctuation(*(++this->tokenizer_iterator)) && --ecx);
+    uint8_t operator_size = MAX_OPERATOR_SIZE;
+    while (Token::is_punctuation(*(++this->tokenizer_iterator)) && --operator_size);
 
     // We iterate operator size starting at the maximum, decrementing till we reach 1.
     // We compare operator size from our current tokenizer iterator to everything in the opcode map of that size.
-    bool found = false;
-    // while (!found) {
-    //     uint8_t operator_size = this->tokenizer_iterator - original_iterator;
-    //     if (strncmp(*(&original_iterator), ))
-    // }
+    operator_size = this->tokenizer_iterator - original_iterator;
+    opcode_t opcode = 0;
+    char c_copy[MAX_OPERATOR_SIZE + 1];
+    strncpy(c_copy, &(*original_iterator), operator_size);
+    c_copy[operator_size] = '\0';
+    while (true) {
+        try {
+            // We try to see if an operator of this length exists.
+            opcode = get_op_cstr_opcode_map(operator_size).at(c_copy);
+        } catch (const std::out_of_range& e) {
+            // If it's not found, then it must have been a little shorter.
+            if (operator_size == 0) {
+                // We hit an operator size of zero before finding anything, this should never happen, as the
+                // condition for getting into this function in the first place is finding a punctuation as per
+                // `if (Token::is_punctuation(*this->tokenizer_iterator))` in Tokenizer::process_next_token.
+                //
+                // Note that this is a throw not a return false because no user-provided input should ever
+                // trigger it. This throw is only triggerable by a change to the codebase that breaks things.
+                throw ERR_OPERATOR_INVALID_PUNC;
+            }
 
-    ++this->tokenizer_iterator;
+            c_copy[--operator_size] = '\0';
+            continue;
+        }
+        break;
+    }
+    this->token_vector.push_back(
+            new ValueToken(OPERATOR, OPCODE_TO_SUBTYPE(opcode), original_iterator, this->tokenizer_iterator,
+                           new opcode_t(opcode)));
+
     return true;
 }
 
