@@ -17,6 +17,11 @@
 
 #define TOKEN_VECTOR_RESERVE         0x00'04'00
 
+typedef struct {
+    opcode_t opcode,
+    uint8_t size,
+} operator_t;
+
 class TokenTypeChecker {
 public:
     explicit TokenTypeChecker (int log_handler (const char*, ...));
@@ -30,7 +35,7 @@ protected:
     std::string::const_iterator tokenizer_iterator_begin;
     std::string::const_iterator tokenizer_iterator_end;
 
-    bool process_symbol ();
+    [[nodiscard]] operator_t process_symbol () const;
 
     [[nodiscard]] bool next_token_is_number () const;
 

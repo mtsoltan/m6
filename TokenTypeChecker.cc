@@ -11,22 +11,21 @@ TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) {
  * allowing us to continue processing.
  * @return
  */
-bool TokenTypeChecker::process_symbol () {
+operator_t TokenTypeChecker::process_symbol () const {
     // Reaching this point means that we have a punctuation symbol.
-    // First, we need to recognize possible operators based on the first punctuation mark,
-    // then compare the second, third, etc. till we settle on a specific operator.
-    // TODO: https://github.com/mtsoltan/m6/issues/7
     std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    // We need to remain constant. Incrementing the operator is the job of the LiteralProcessor.
+    std::string::const_iterator temp = this->tokenizer_iterator;
 
     // We check how many symbols are in a row.
     // If more than 4, we set the maximum per single operator to 4.
     // At the end of this loop, the token iterator will be on the character after the possible operator.
     uint8_t operator_size = MAX_OPERATOR_SIZE;
-    while (Token::is_punctuation(*(++this->tokenizer_iterator)) && --operator_size);
+    while (Token::is_punctuation(*(++temp)) && --operator_size);
 
     // We iterate operator size starting at the maximum, decrementing till we reach 1.
     // We compare operator size from our current tokenizer iterator to everything in the opcode map of that size.
-    operator_size = this->tokenizer_iterator - original_iterator;
+    operator_size = temp - original_iterator;
     opcode_t opcode = 0;
     char c_copy[MAX_OPERATOR_SIZE + 1];
     strncpy(c_copy, &(*original_iterator), operator_size);
@@ -52,11 +51,8 @@ bool TokenTypeChecker::process_symbol () {
         }
         break;
     }
-    this->token_vector.push_back(
-            new ValueToken(OPERATOR, OPCODE_TO_SUBTYPE(opcode), original_iterator, this->tokenizer_iterator,
-                           new opcode_t(opcode)));
 
-    return true;
+    return {opcode, operator_size};  // These get copied instead of passed by reference and I'm fine with it.
 }
 
 int64_t TokenTypeChecker::get_char_offset () const {
