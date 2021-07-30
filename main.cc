@@ -1,6 +1,7 @@
 #include <Tokenizer.h>
 
 // TODO: https://github.com/mtsoltan/m6/issues/14
+// TODO: https://github.com/mtsoltan/m6/issues/17
 int main (int argc, const char** argv) {
     LTS_
 
