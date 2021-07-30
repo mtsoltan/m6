@@ -11,6 +11,8 @@ public:
 
     std::vector<Token*>& tokenize (const std::string& str);
 
+    std::vector<std::string>& get_identifier_stack ();
+
 protected:
     bool process_next_token ();
 };
