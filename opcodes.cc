@@ -1,6 +1,6 @@
 #include <opcodes.h>
 
-const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size = 0) {
+const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size) {
     static const opcode_cstr_map op_opcode_cstr_map_1 {
             {OPCODE_QMARK,        "?"},
             {OPCODE_COLON,        ":"},  // Used in trinary operators, cases, labels,
@@ -72,15 +72,6 @@ const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size = 0) 
             {OPCODE_ASHRU, ">>>="},
     };
 
-    static opcode_cstr_map op_opcode_cstr_map_0_builder {};
-    op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_4));
-    op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_3));
-    op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_2));
-    op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_1));
-
-    static const opcode_cstr_map op_opcode_cstr_map_0 =
-            *const_cast<const opcode_cstr_map*>(&op_opcode_cstr_map_0_builder);
-
     switch (operator_size) {
         case 4:
             return op_opcode_cstr_map_4;
@@ -91,7 +82,112 @@ const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size = 0) 
         case 1:
             return op_opcode_cstr_map_1;
         case 0:
+            static opcode_cstr_map op_opcode_cstr_map_0_builder {};
+            op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_4));
+            op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_3));
+            op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_2));
+            op_opcode_cstr_map_0_builder.merge(*const_cast<opcode_cstr_map*>(&op_opcode_cstr_map_1));
+
+            static const opcode_cstr_map op_opcode_cstr_map_0 =
+                    *const_cast<const opcode_cstr_map*>(&op_opcode_cstr_map_0_builder);
+
             return op_opcode_cstr_map_0;
+        default:
+            throw ERR_OPERATOR_INVALID_SIZE;
+    }
+}
+
+const cstr_opcode_map& get_op_cstr_opcode_map (const uint8_t operator_size) {
+    static const cstr_opcode_map op_cstr_opcode_map_1 {
+            {"?", OPCODE_QMARK},
+            {":", OPCODE_COLON},  // Used in trinary operators, cases, labels,
+            {",", OPCODE_COMMA},  // and object property declaration.
+            {".", OPCODE_DOT},
+            {"=", OPCODE_A},
+            {">", OPCODE_GT},
+            {"<", OPCODE_LT},
+            {"+", OPCODE_ADD},  // OPCODE_USUB
+            {"-", OPCODE_SUB},  // OPCODE_UADD
+            {"*", OPCODE_MUL},
+            {"/", OPCODE_DIV},  // OPCODE_REGEX1, OPCODE_REGEX2
+            {"%", OPCODE_REM},
+            {"&", OPCODE_ANDB},
+            {"|", OPCODE_ORB},
+            {"^", OPCODE_XORB},
+            {"~", OPCODE_NOTB},
+            {"!", OPCODE_NOTL},
+            {"\"", OPCODE_QDOUBLE},
+            {"'", OPCODE_QSINGLE},
+            {"`", OPCODE_QTICK},
+            {"(", OPCODE_PARENTHESES1},  // Used in keyword blocks, function literals, grouping, and
+            {")", OPCODE_PARENTHESES2},  // function calls.
+            {"[", OPCODE_BRACKET1},  // Used in array access, array literals, and array appending.
+            {"]", OPCODE_BRACKET2},
+            {"{", OPCODE_BRACES1},  // Used in keyword blocks, label blocks, and object literals.
+            {"}", OPCODE_BRACES2},
+    };
+    static const cstr_opcode_map op_cstr_opcode_map_2 {
+            {"??", OPCODE_NULLC},
+            {"=>", OPCODE_ARROW},
+            {".?", OPCODE_DOTQMARK},
+            {"+=", OPCODE_AADD},
+            {"-=", OPCODE_ASUB},
+            {"*=", OPCODE_AMUL},
+            {"/=", OPCODE_ADIV},
+            {"%=", OPCODE_AREM},
+            {"&=", OPCODE_AANDB},
+            {"^=", OPCODE_AXORB},
+            {"|=", OPCODE_AORB},
+            {"==", OPCODE_EQ},
+            {"!=", OPCODE_NE},
+            {">=", OPCODE_GTE},
+            {"<=", OPCODE_LTE},
+            {"**", OPCODE_PWR},
+            {"++", OPCODE_INC},
+            {"--", OPCODE_DEC},
+            {"<<", OPCODE_SHL},
+            {">>", OPCODE_SHR},
+            {"&&", OPCODE_ANDL},
+            {"||", OPCODE_ORL},
+            {"/*", OPCODE_COMMENT1},
+            {"*/", OPCODE_COMMENT2},
+            {"//", OPCODE_COMMENTL},
+    };
+    static const cstr_opcode_map op_cstr_opcode_map_3 {
+            {"**=", OPCODE_APWR},
+            {"<<=", OPCODE_ASHL},
+            {">>=", OPCODE_ASHR},
+            {"...", OPCODE_TRIPLEDOT},
+            {"&&=", OPCODE_AANDL},
+            {"||=", OPCODE_AORL},
+            {"?\?=", OPCODE_ANULLC},
+            {"===", OPCODE_EQE},
+            {"!==", OPCODE_NEE},
+            {">>>", OPCODE_SHRU},
+    };
+    static const cstr_opcode_map op_cstr_opcode_map_4 {
+            {">>>=", OPCODE_ASHRU},
+    };
+
+    switch (operator_size) {
+        case 4:
+            return op_cstr_opcode_map_4;
+        case 3:
+            return op_cstr_opcode_map_3;
+        case 2:
+            return op_cstr_opcode_map_2;
+        case 1:
+            return op_cstr_opcode_map_1;
+        case 0:
+            static cstr_opcode_map op_cstr_opcode_map_0_builder {};
+            op_cstr_opcode_map_0_builder.merge(*const_cast<cstr_opcode_map*>(&op_cstr_opcode_map_4));
+            op_cstr_opcode_map_0_builder.merge(*const_cast<cstr_opcode_map*>(&op_cstr_opcode_map_3));
+            op_cstr_opcode_map_0_builder.merge(*const_cast<cstr_opcode_map*>(&op_cstr_opcode_map_2));
+            op_cstr_opcode_map_0_builder.merge(*const_cast<cstr_opcode_map*>(&op_cstr_opcode_map_1));
+
+            static const cstr_opcode_map op_cstr_opcode_map_0 =
+                    *const_cast<const cstr_opcode_map*>(&op_cstr_opcode_map_0_builder);
+            return op_cstr_opcode_map_0;
         default:
             throw ERR_OPERATOR_INVALID_SIZE;
     }
