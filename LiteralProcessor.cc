@@ -28,10 +28,11 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
     if (memoized & OP_KEYWORD) {
         // TODO: https://github.com/mtsoltan/m6/issues/6
         std::string::const_iterator original_iterator = this->tokenizer_iterator;
-        this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized)) + 1;
+        this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized));
         this->token_vector.push_back(
                 new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
                                new opcode_t(memoized)));
+        ++this->tokenizer_iterator;
         return true;
     }
 

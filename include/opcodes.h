@@ -4,6 +4,11 @@
 // TODO: https://github.com/mtsoltan/m6/issues/15
 #include <map>
 #include <cinttypes>
+#include <cstring>
+
+#include <errors.h>
+
+#define MAX_OPERATOR_SIZE 4
 
 #define OP_KEYWORD         ((opcode_t) ( 1u << 15u))
 #define OP_KEYWORD_SIZE    ((uint8_t)(sizeof("synchronized") / sizeof(char)))
@@ -41,10 +46,10 @@ enum opcode_enum_t : opcode_t {
     // OPERATORS
 
     OPCODE_QMARK,
-    OPCODE_COLON,  // Used in trinary operators, cases, labels, and object property declaration.
+    OPCODE_COLON,
 
     OPCODE_COMMA,
-    OPCODE_DQMARK,
+    OPCODE_NULLC,
     OPCODE_ARROW,
 
     OPCODE_DOT,
@@ -66,11 +71,11 @@ enum opcode_enum_t : opcode_t {
     OPCODE_AORB,
     OPCODE_AANDL,
     OPCODE_AORL,
-    OPCODE_ANULL,  // ??=
+    OPCODE_ANULLC,
 
     OPCODE_EQ = OP_COMPARISON,
     OPCODE_NE,
-    OPCODE_EQE,  // Strict
+    OPCODE_EQE,
     OPCODE_NEE,
     OPCODE_GT,
     OPCODE_GTE,
@@ -80,7 +85,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_ADD = OP_ARITHMETIC,
     OPCODE_SUB,
     OPCODE_MUL,
-    OPCODE_DIV,  // Divide is also the regex start / end.
+    OPCODE_DIV,
     OPCODE_REM,
     OPCODE_PWR,
 
@@ -95,7 +100,7 @@ enum opcode_enum_t : opcode_t {
     OPCODE_XORB,
     OPCODE_SHL,
     OPCODE_SHR,
-    OPCODE_SHRU,  // >>>, the zero fill right shift
+    OPCODE_SHRU,
 
     OPCODE_NOTB = OP_UNARY_L | OP_BITWISE,
 
@@ -107,6 +112,8 @@ enum opcode_enum_t : opcode_t {
     OPCODE_QDOUBLE = OP_START_END,
     OPCODE_QSINGLE,
     OPCODE_QTICK,
+    OPCODE_REGEX1,
+    OPCODE_REGEX2,
 
     OPCODE_PARENTHESES1,
     OPCODE_PARENTHESES2,
@@ -201,9 +208,17 @@ enum opcode_enum_t : opcode_t {
     OPCODE_VOLATILE,
 };
 
-typedef std::map<opcode_t, const char *> keyword_map;
+struct char_cmp {
+    bool operator() (const char* a, const char* b) const {
+        return strcmp(a, b) < 0;
+    }
+};
 
-const std::map<opcode_t, const char*>& get_kw_map ();
+typedef std::map<opcode_t, const char*> opcode_cstr_map;
+typedef std::map<const char*, opcode_t, char_cmp> cstr_opcode_map;
 
+const opcode_cstr_map& get_kw_opcode_cstr_map ();
+
+const cstr_opcode_map& get_kw_cstr_opcode_map ();
 
 #endif

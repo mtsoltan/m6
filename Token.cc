@@ -27,22 +27,26 @@ bool Token::is_line_terminator (const char c) {
 
 opcode_t Token::cstr_to_opcode (const char* const c) {
     uint8_t end = 0;
+    char c_copy[OP_KEYWORD_SIZE];
+
     for (; end < OP_KEYWORD_SIZE; ++end) {
         if (Token::is_whitespace(c[end])) {
             break;
         }
     }
-    for (auto& it : get_kw_map()) {
-        if (strncmp(it.second, c, end) == 0) {
-            return it.first;
-        }
-    }
 
-    return OPCODE_NOOP;
+    strncpy(c_copy, c, end);
+    c_copy[end] = '\0';
+
+    try {
+        return get_kw_cstr_opcode_map().at(c_copy);
+    } catch (const std::out_of_range& e) {
+        return OPCODE_NOOP;
+    }
 }
 
 const char* Token::opcode_to_cstr (const opcode_t keyword_opcode) {
-    return get_kw_map().at(keyword_opcode);
+    return get_kw_opcode_cstr_map().at(keyword_opcode);
 }
 
 bool Token::is_punctuation (const char c) {
