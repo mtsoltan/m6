@@ -37,6 +37,8 @@ protected:
     [[nodiscard]] opcode_t next_token_is_keyword () const;
 
     [[nodiscard]] int64_t get_char_offset () const;
+
+    [[nodiscard]] std::string::const_iterator find_end_of_start_operator() const;
 };
 
 #endif
