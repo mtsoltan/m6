@@ -11,6 +11,7 @@
 #define ERR_OPERATOR_INVALID_PUNC   5
 
 
+// TODO: https://github.com/mtsoltan/m6/issues/16
 extern const char errors[ERR_COUNT + 1][100];
 
 
