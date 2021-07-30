@@ -117,7 +117,7 @@ bool Tokenizer::process_next_token () {
     // Operators have to be processed before identifiers so that "var" and "let" do not end up being recognized
     // as identifiers.
     if (Token::is_punctuation(*this->tokenizer_iterator)) {
-        rv = this->process_symbol();
+        rv = this->process_operator();
         goto expect;
     }
 

@@ -26,6 +26,8 @@ protected:
     bool process_identifier ();
 
     bool process_keyword (opcode_t memoized);
+
+    bool process_operator ();
 };
 
 
