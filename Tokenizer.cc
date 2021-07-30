@@ -11,14 +11,16 @@ std::vector<std::string>& Tokenizer::get_identifier_stack () {
 }
 
 /**
- * Attempts to tokenize a given string, usually a file contents.
+ * Attempts to tokenize a given two iterators for the start and end of a string or string segment.
+ *
  * @param file_contents
  * @return
  */
-std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
-    this->tokenizer_iterator = str.begin();
-    this->tokenizer_iterator_begin = str.begin();
-    this->tokenizer_iterator_end = str.end();
+std::vector<Token*>&
+Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    this->tokenizer_iterator = begin;
+    this->tokenizer_iterator_begin = begin;
+    this->tokenizer_iterator_end = end;
 
     // Attempt to process the next token forever till process_next_token returns false.
     // It will return false when done or when it encounters an error.
@@ -29,6 +31,15 @@ std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
     }
 
     return this->token_vector;
+}
+
+/**
+ * Attempts to tokenize a given string, usually a file contents.
+ * @param file_contents
+ * @return
+ */
+std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
+    return this->tokenize(str.begin(), str.end());
 }
 
 /**
@@ -137,4 +148,3 @@ bool Tokenizer::process_next_token () {
     // Returns false once done, or once any subprocess returns false, or if an error has been encountered.
     return rv;
 }
-
