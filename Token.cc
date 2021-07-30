@@ -13,7 +13,7 @@ bool Token::is_identifier (const char c) {
 }
 
 bool Token::is_whitespace (const char c) {
-    for (int i = 0; i < sizeof(WHITESPACE_CHARACTERS) / sizeof(char); ++i) {
+    for (int i = 0; i < sizeof(WHITESPACE_CHARACTERS) / sizeof(char) - 1; ++i) {
         if (c == WHITESPACE_CHARACTERS[i]) {
             return true;
         }
@@ -50,7 +50,7 @@ const char* Token::opcode_to_cstr (const opcode_t keyword_opcode) {
 }
 
 bool Token::is_punctuation (const char c) {
-    for (int i = 0; i < sizeof(PUNCTUATION_CHARACTERS) / sizeof(char); ++i) {
+    for (int i = 0; i < sizeof(PUNCTUATION_CHARACTERS) / sizeof(char) - 1; ++i) {
         if (c == PUNCTUATION_CHARACTERS[i]) {
             return true;
         }
