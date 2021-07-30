@@ -54,7 +54,7 @@ const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size) {
             {OPCODE_ORL,      "||"},
             {OPCODE_COMMENT1, "/*"},
             {OPCODE_COMMENT2, "*/"},
-            {OPCODE_COMMENTL, "//"},
+            {OPCODE_COMMENTL, "//"},  // The end for this is the newline.
     };
     static const opcode_cstr_map op_opcode_cstr_map_3 {
             {OPCODE_APWR,      "**="},

@@ -18,6 +18,10 @@
 #define OP_UNARY_R         ((opcode_t) (1u << 13u))
 #define OP_UNARY           ((opcode_t) (OP_UNARY_L | OP_UNARY_R))  // What is not unary is binary.
 
+#define OP_RANGE_END       ((opcode_t) (1u << 14u))
+#define OP_RANGE_START     ((opcode_t) (1u << 13u))
+#define OP_RANGE_SYM       ((opcode_t) (OP_RANGE_END | OP_RANGE_START))
+
 #define OP_ASSIGNMENT      ((opcode_t) (7u << 10u))
 #define OP_COMPARISON      ((opcode_t) (6u << 10u))
 #define OP_ARITHMETIC      ((opcode_t) (5u << 10u))
@@ -109,21 +113,22 @@ enum opcode_enum_t : opcode_t {
     OPCODE_ANDL = OP_LOGICAL,
     OPCODE_ORL,
 
-    OPCODE_QDOUBLE = OP_START_END,
+    OPCODE_QDOUBLE = OP_START_END | OP_RANGE_SYM,
     OPCODE_QSINGLE,
     OPCODE_QTICK,
-    OPCODE_REGEX1,
-    OPCODE_REGEX2,
 
-    OPCODE_PARENTHESES1,
-    OPCODE_PARENTHESES2,
+    OPCODE_PARENTHESES1 = OP_START_END | OP_RANGE_START,
     OPCODE_BRACKET1,
-    OPCODE_BRACKET2,
     OPCODE_BRACES1,
-    OPCODE_BRACES2,
     OPCODE_COMMENT1,
-    OPCODE_COMMENT2,
+    OPCODE_REGEX1,
     OPCODE_COMMENTL,
+
+    OPCODE_PARENTHESES2 = OP_START_END | OP_RANGE_END,
+    OPCODE_BRACKET2,
+    OPCODE_BRACES2,
+    OPCODE_COMMENT2,
+    OPCODE_REGEX2,
 
     // KEYWORDS
 
