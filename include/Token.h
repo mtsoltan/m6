@@ -39,7 +39,7 @@
 #define COMMENT      ((token_type_t) (1u << 12u) | RANGE_TOKEN)
 #define PARENTHESES  ((token_type_t) (1u << 13u) | RANGE_TOKEN)
 #define BRACKETS     ((token_type_t) (1u << 14u) | RANGE_TOKEN)
-#define CURLIES      ((token_type_t) (1u << 15u) | RANGE_TOKEN)
+#define BRACES      ((token_type_t) (1u << 15u) | RANGE_TOKEN)
 
 
 // Common Subtypes
