@@ -28,6 +28,8 @@
 #define OP_BITWISE         ((opcode_t) (4u << 10u))
 #define OP_LOGICAL         ((opcode_t) (3u << 10u))
 #define OP_START_END       ((opcode_t) (1u <<  9u))
+#define OP_NESTABLE        ((opcode_t) (1u <<  8u))
+#define OP_DECIDED         ((opcode_t) (1u <<  7u))
 
 
 #define OP_KW_BINARY       ((opcode_t) (3u << 13u))
@@ -116,19 +118,28 @@ enum opcode_enum_t : opcode_t {
     OPCODE_QDOUBLE = OP_START_END | OP_RANGE_SYM,
     OPCODE_QSINGLE,
     OPCODE_QTICK,
+    OPCODE_REGEX,
 
-    OPCODE_PARENTHESES1 = OP_START_END | OP_RANGE_START,
+    OPCODE_PARENTHESES1 = OP_START_END | OP_RANGE_START | OP_NESTABLE,
     OPCODE_BRACKET1,
     OPCODE_BRACES1,
-    OPCODE_COMMENT1,
-    OPCODE_REGEX1,
+
+    OPCODE_FNCALL = OP_START_END | OP_RANGE_START | OP_NESTABLE | OP_DECIDED,
+    OPCODE_GROUPING,
+    OPCODE_FNPARAM,
+    OPCODE_ARRAY,
+    OPCODE_ACCESS,
+    OPCODE_APPEND,
+    OPCODE_OBJECT,
+    OPCODE_SCOPE,
+
+    OPCODE_COMMENT1 = OP_START_END | OP_RANGE_START,
     OPCODE_COMMENTL,
 
     OPCODE_PARENTHESES2 = OP_START_END | OP_RANGE_END,
     OPCODE_BRACKET2,
     OPCODE_BRACES2,
     OPCODE_COMMENT2,
-    OPCODE_REGEX2,
 
     // KEYWORDS
 
