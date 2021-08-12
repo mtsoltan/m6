@@ -200,6 +200,12 @@ bool LiteralProcessor::process_operator () {
     // increment our tokenizer_iterator.
     operator_t o = this->process_symbol();
 
+    // We have to be very careful on OPCODE_DIV which can be the regex starter.
+    // We call LiteralProcessor->next_token_is_regex to find out.
+    if (this->next_token_is_regex(&o)) {
+        o.opcode = OPCODE_REGEX;
+    }
+
     if (o.opcode & OP_START_END) {
         // If it's an end-only operator, throw a syntax error.
         if (!(o.opcode & OP_RANGE_START)) {
@@ -207,25 +213,8 @@ bool LiteralProcessor::process_operator () {
         }
 
         // If it's a start operator, we need to find its end.
-        std::string::const_iterator it = this->find_end_of_start_operator();
-
-        // If it is discovered that it is a string / regex literal (unambiguous unlike array, object,
-        // function ones), the called function should process it immediately using process_x_literal in this
-        // LiteralProcessor class. Be ware with the modifiers at the end of regex literals.
-        ;  // TODO: https://github.com/mtsoltan/m6/issues/7
-
-        // If it is however a (), [], or {}, a separate function is called to find its end.
-        // The separate function will increment the tokenizer iterator for us to the end, taking care of nesting.
-        // We then make a () / [] / {} range token, without specifying what type of () / [], {} it is.
-        // Template literals will have to wait for later as well because they can have subscopes.
-        // The keyword balancer will decide what to make of those.
-        ;  // TODO: https://github.com/mtsoltan/m6/issues/7
-
-        return true;
+        return this->parse_range(&o);
     } else {
-        // We have to be very careful on OPCODE_DIV which can be the regex starter.
-        ;  // TODO: https://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash
-
         this->token_vector.push_back(
                 new ValueToken(OPERATOR, OPCODE_TO_SUBTYPE(o.opcode), this->tokenizer_iterator,
                                this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
