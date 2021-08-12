@@ -12,7 +12,7 @@ const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size) {
             {OPCODE_ADD,          "+"},  // OPCODE_USUB
             {OPCODE_SUB,          "-"},  // OPCODE_UADD
             {OPCODE_MUL,          "*"},
-            {OPCODE_DIV,          "/"},  // OPCODE_REGEX1, OPCODE_REGEX2
+            {OPCODE_DIV,          "/"},  // OPCODE_REGEX
             {OPCODE_REM,          "%"},
             {OPCODE_ANDB,         "&"},
             {OPCODE_ORB,          "|"},
@@ -100,16 +100,16 @@ const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size) {
 const cstr_opcode_map& get_op_cstr_opcode_map (const uint8_t operator_size) {
     static const cstr_opcode_map op_cstr_opcode_map_1 {
             {"?", OPCODE_QMARK},
-            {":", OPCODE_COLON},  // Used in trinary operators, cases, labels,
-            {",", OPCODE_COMMA},  // and object property declaration.
+            {":", OPCODE_COLON},
+            {",", OPCODE_COMMA},
             {".", OPCODE_DOT},
             {"=", OPCODE_A},
             {">", OPCODE_GT},
             {"<", OPCODE_LT},
-            {"+", OPCODE_ADD},  // OPCODE_USUB
-            {"-", OPCODE_SUB},  // OPCODE_UADD
+            {"+", OPCODE_ADD},
+            {"-", OPCODE_SUB},
             {"*", OPCODE_MUL},
-            {"/", OPCODE_DIV},  // OPCODE_REGEX1, OPCODE_REGEX2
+            {"/", OPCODE_DIV},
             {"%", OPCODE_REM},
             {"&", OPCODE_ANDB},
             {"|", OPCODE_ORB},
@@ -119,11 +119,11 @@ const cstr_opcode_map& get_op_cstr_opcode_map (const uint8_t operator_size) {
             {"\"", OPCODE_QDOUBLE},
             {"'", OPCODE_QSINGLE},
             {"`", OPCODE_QTICK},
-            {"(", OPCODE_PARENTHESES1},  // Used in keyword blocks, function literals, grouping, and
-            {")", OPCODE_PARENTHESES2},  // function calls.
-            {"[", OPCODE_BRACKET1},  // Used in array access, array literals, and array appending.
+            {"(", OPCODE_PARENTHESES1},
+            {")", OPCODE_PARENTHESES2},
+            {"[", OPCODE_BRACKET1},
             {"]", OPCODE_BRACKET2},
-            {"{", OPCODE_BRACES1},  // Used in keyword blocks, label blocks, and object literals.
+            {"{", OPCODE_BRACES1},
             {"}", OPCODE_BRACES2},
     };
     static const cstr_opcode_map op_cstr_opcode_map_2 {
