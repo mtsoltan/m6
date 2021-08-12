@@ -85,15 +85,3 @@ bool TokenTypeChecker::next_token_is_number () const {
 opcode_t TokenTypeChecker::next_token_is_keyword () const {
     return Token::cstr_to_opcode(&(*this->tokenizer_iterator));
 }
-
-/**
- * If there's a start operator at the tokenizer_iterator when this function is called, it returns
- * an iterator to the end operator of that start operator.
- * Otherwise it throws.
- * @return
- */
-std::string::const_iterator TokenTypeChecker::find_end_of_start_operator() const {
-    std::string::const_iterator temp = this->tokenizer_iterator;
-
-    ; // TODO: https://github.com/mtsoltan/m6/issues/7
-}
