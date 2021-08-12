@@ -18,8 +18,8 @@
 #define TOKEN_VECTOR_RESERVE         0x00'04'00
 
 typedef struct {
-    opcode_t opcode,
-    uint8_t size,
+    opcode_t opcode;
+    uint8_t size;
 } operator_t;
 
 class TokenTypeChecker {
