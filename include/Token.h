@@ -107,6 +107,8 @@ public:
                 std::string::const_iterator start, std::string::const_iterator end,
                 void* value_ptr);
 
+    bool cannot_precede_division ();
+
 protected:
     void* const value_ptr;
 };
