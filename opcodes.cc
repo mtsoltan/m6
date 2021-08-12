@@ -1,5 +1,21 @@
 #include <opcodes.h>
 
+const cstr_cstr_map& get_start_end_map () {
+    static const cstr_cstr_map start_end_map {
+            {"{", "}"},
+            {"(", ")"},
+            {"[", "]"},
+            {"/", "/"},
+            {"/*", "*/"},
+            {"`", "`"},
+            {"\"", "\""},
+            {"'", "'"},
+            {"//", "\n"},  // Comments should end on carriage return too, but we'll ignore that for now.
+    };
+
+    return start_end_map;
+}
+
 const opcode_cstr_map& get_op_opcode_cstr_map (const uint8_t operator_size) {
     static const opcode_cstr_map op_opcode_cstr_map_1 {
             {OPCODE_QMARK,        "?"},

@@ -232,6 +232,7 @@ struct char_cmp {
 
 typedef std::map<opcode_t, const char*> opcode_cstr_map;
 typedef std::map<const char*, opcode_t, char_cmp> cstr_opcode_map;
+typedef std::map<const char*, const char*, char_cmp> cstr_cstr_map;
 
 const opcode_cstr_map& get_op_opcode_cstr_map (uint8_t operator_size = 0);
 
@@ -240,5 +241,7 @@ const cstr_opcode_map& get_op_cstr_opcode_map (uint8_t operator_size = 0);
 const opcode_cstr_map& get_kw_opcode_cstr_map ();
 
 const cstr_opcode_map& get_kw_cstr_opcode_map ();
+
+const cstr_cstr_map& get_start_end_map ();
 
 #endif
