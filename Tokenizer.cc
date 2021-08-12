@@ -16,7 +16,7 @@ std::vector<std::string>& Tokenizer::get_identifier_stack () {
  * @param file_contents
  * @return
  */
-std::vector<Token*>&
+std::vector<ValueToken*>&
 Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
     this->tokenizer_iterator = begin;
     this->tokenizer_iterator_begin = begin;
@@ -38,7 +38,7 @@ Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string
  * @param file_contents
  * @return
  */
-std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
+std::vector<ValueToken*>& Tokenizer::tokenize (const std::string& str) {
     return this->tokenize(str.begin(), str.end());
 }
 
@@ -47,7 +47,7 @@ std::vector<Token*>& Tokenizer::tokenize (const std::string& str) {
  * @param file_name
  * @return
  */
-std::vector<Token*>& Tokenizer::tokenize (const char* file_name) {
+std::vector<ValueToken*>& Tokenizer::tokenize (const char* file_name) {
     std::ifstream file(file_name, std::ios::binary | std::ios::in);
 
     if (file.fail()) {
