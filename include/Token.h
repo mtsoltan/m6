@@ -60,7 +60,8 @@
 // Operator and keyword subtypes are present in opcodes.h:
 // - OP_ASSIGNMENT to OP_START_END
 // - OP_KW_BLOCK to OP_KW_OPERATOR
-#define OPCODE_TO_SUBTYPE(n) ((opcode_t) (n & (0x7fu << 9u)))
+// This macro just discards all bits except those significant to the marking of the subtype.
+#define OPCODE_TO_SUBTYPE(n) ((token_subtype_t) (n & (0x1ffu << 7u)))
 
 // Only 32 are used for token_type_t, but we lose nothing.
 // Only 8 are used for token_subtype_t in everything but operators.
