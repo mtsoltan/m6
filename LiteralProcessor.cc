@@ -39,6 +39,156 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
     return false;  // What we have memoized from the TokenTypeChecker::next_token_is_keyword call is not a keyword!
 }
 
+
+/**
+ * If there's a start operator at the tokenizer_iterator when this function is called, it returns
+ * an iterator to the end operator of that start operator.
+ * Otherwise it throws.
+ * @return
+ */
+bool LiteralProcessor::parse_range (const operator_t* const memoized) {
+    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+
+    operator_t o;
+    if (memoized == nullptr) {
+        o = this->process_symbol();
+    } else {
+        o = *memoized;
+    }
+
+    const char* end_operator;
+
+    try {
+        char* c_copy = new char[o.size + 1];
+        strncpy(c_copy, &(*original_iterator), o.size);
+        c_copy[o.size] = '\0';
+
+        end_operator = get_start_end_map().at(c_copy);
+    } catch (const std::out_of_range& e) {
+        throw ERR_INVALID_START_OPERATOR;
+    }
+
+    uint8_t end_size = strlen(end_operator);
+
+    if (o.opcode & OP_NESTABLE) {  // {, (, [
+        int64_t nesting_level = 0;
+        while (nesting_level >= 0) {
+            // Find next start/end operators and increment decrement nesting level until it hits -1.
+            bool start_found, end_found, string_ended;
+            while (
+                    !(start_found = strncmp(&(*++this->tokenizer_iterator), &(*original_iterator), o.size) == 0) &&
+                    !(end_found = strncmp(&(*this->tokenizer_iterator), end_operator, end_size) == 0) &&
+                    !(string_ended = this->get_char_offset() == NOT_FOUND)
+                    );
+            if (start_found) {
+                ++nesting_level;
+            }
+            if (end_found) {
+                --nesting_level;
+            }
+            if (string_ended) {
+                return false;  // Syntax error, expected closing.
+            }
+
+            if (nesting_level < 0) {
+                // We found the end. Create a new token.
+                // Since it's a (), [], or {}, we make it an undecided start_end nestable token.
+                // The keyword balancer will decide what to make of those.
+                token_type_t type =
+                        o.opcode == OPCODE_PARENTHESES1 ? PARENTHESES :
+                        o.opcode == OPCODE_BRACKET1 ? BRACKETS :
+                        o.opcode == OPCODE_BRACES1 ? BRACES : NOTHING;
+
+                this->token_vector.push_back(
+                        new ValueToken(type, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
+                                       this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
+
+                return true;
+            }
+        }
+
+        // We should probably throw instead of return a syntax error?
+        return false;
+    } else {  // /, /*, //, `, ", '
+        // Find the next end operator.
+        was_escaped:  // If it was escaped, we retry finding the next one.
+
+        while (true) {
+            ++this->tokenizer_iterator;
+            if (this->get_char_offset() == NOT_FOUND) {
+                return false;  // Syntax error, expected closing, but code ended before closing was found.
+            }
+            if (Token::is_line_terminator(*this->tokenizer_iterator)) {
+                if (o.opcode == OPCODE_COMMENTL) {
+                    break;
+                }
+                if (o.opcode == OPCODE_QDOUBLE || o.opcode == OPCODE_QSINGLE || o.opcode == OPCODE_REGEX) {
+                    return false;  // Syntax error, EOL encountered before string end.
+                }
+            }
+            if (strncmp(&(*this->tokenizer_iterator), end_operator, end_size) == 0) {
+                break;  // We found an end operator.
+            }
+        }
+
+        if (*(this->tokenizer_iterator - 1) == '\\' && o.opcode & OP_RANGE_SYM) {
+            // Only symmetric opcodes can be escaped with a backslash.
+            goto was_escaped;
+        }
+
+        // We found the end. Create a new token.
+
+        // For anything but the line-comment, we add the end operator to the tokenizer_iterator.
+        // The line-comment works differently, because the \n actually needs to get parsed as an EOL.
+        if (o.opcode != OPCODE_COMMENTL) {
+            this->tokenizer_iterator += end_size;
+        }
+
+        // If it is discovered that it is a string / regex literal (unambiguous unlike array, object,
+        // function ones), the called function should process it immediately using process_x_literal in this
+        // LiteralProcessor class. Be ware with the modifiers at the end of regex literals.
+
+        // Take care of regex post modifiers in parse_regex_literal.
+
+        // Template literals, however, will have to wait for later because they can have subscopes.
+        if (o.opcode == OPCODE_COMMENT1 || o.opcode == OPCODE_COMMENTL) {
+            this->token_vector.push_back(
+                    new ValueToken(COMMENT, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            return true;
+        }
+
+        if (o.opcode == OPCODE_QDOUBLE || o.opcode == OPCODE_QSINGLE) {
+            // Keep in mind that value_ptr is not null-terminated.
+            // This means that we'll have to be careful when it ends.
+            this->token_vector.push_back(
+                    new ValueToken(STRING, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            return true;
+        }
+
+        // If it's a regex, any identifiers stuck to it will be post-modifiers.
+        if (o.opcode == OPCODE_REGEX) {
+            while(Token::is_identifier(*this->tokenizer_iterator)) {
+                this->tokenizer_iterator++;
+            }
+
+            this->token_vector.push_back(
+                    new ValueToken(REGEX, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            return true;
+        }
+
+        // For now, the pre-modifiers of templates are considered separate identifiers.
+        if (o.opcode == OPCODE_QTICK) {
+            this->token_vector.push_back(
+                    new ValueToken(TEMPLATE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            return true;
+        }
+
+        // We should probably throw and not return a syntax error?
+        return false;
+    }
+}
+
+
 bool LiteralProcessor::process_operator () {
     // We first try to process the symbol
 
