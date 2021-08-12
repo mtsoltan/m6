@@ -83,6 +83,36 @@ bool LiteralProcessor::process_operator () {
     }
 }
 
+bool LiteralProcessor::next_token_is_regex (const operator_t* const memoized) {
+    operator_t o;
+    if (memoized == nullptr) {
+        o = this->process_symbol();
+    } else {
+        o = *memoized;
+    }
+
+    if (o.opcode != OPCODE_DIV) {  // If it doesn't start with the division symbol, it can't be regex.
+        return false;
+    }
+
+    // We look at the last token in our token vector:
+    std::vector<ValueToken*>::iterator last_token = this->token_vector.end() - 1; // NOLINT(hicpp-use-auto,modernize-use-auto)
+
+    while (true) {
+        try {
+            if ((*last_token)->cannot_precede_division()) return true;
+        } catch(error_t e) {
+            last_token--;
+            continue;
+        }
+
+        break;
+    }
+
+    // The token before could precede division, so we'll assume this is division and not regex.
+    return false;
+}
+
 /**
  * Once we know that we've encountered an identifier, we can process it using this method.
  * This method will change the position of this->tokenizer_iterator to after the identifier,

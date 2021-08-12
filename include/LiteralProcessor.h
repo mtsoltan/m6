@@ -28,6 +28,8 @@ protected:
     bool process_keyword (opcode_t memoized);
 
     bool process_operator ();
+
+    bool next_token_is_regex (const operator_t* memoized);
 };
 
 
