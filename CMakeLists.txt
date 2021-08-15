@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(m6)
 
 add_library(cfiles
-        Tokenizer.cc LiteralProcessor.cc TokenTypeChecker.cc Token.cc
+        Tokenizer.cc LiteralProcessor.cc TokenTypeChecker.cc Token.cc KeywordBalancer.cc
         io.cc opcodes.cc errors.cc)
 
 target_include_directories(cfiles PUBLIC include)
