@@ -25,7 +25,7 @@ bool Token::is_line_terminator (const char c) {
     return c == '\r' || c == '\n';
 }
 
-opcode_t Token::cstr_to_opcode (const char* const c) {
+opcode_t Token::kw_cstr_to_opcode (const char* const c) {
     uint8_t end = 0;
     char c_copy[OP_KEYWORD_SIZE];
 
@@ -45,7 +45,7 @@ opcode_t Token::cstr_to_opcode (const char* const c) {
     }
 }
 
-const char* Token::opcode_to_cstr (const opcode_t keyword_opcode) {
+const char* Token::kw_opcode_to_cstr (const opcode_t keyword_opcode) {
     return get_kw_opcode_cstr_map().at(keyword_opcode);
 }
 

@@ -26,13 +26,21 @@ token_type_t LiteralProcessor::unexpect () {
 bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
-        // TODO: https://github.com/mtsoltan/m6/issues/6
         std::string::const_iterator original_iterator = this->tokenizer_iterator;
-        this->tokenizer_iterator += strlen(Token::opcode_to_cstr(memoized));
-        this->token_vector.push_back(
-                new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
-                               new opcode_t(memoized)));
+        this->tokenizer_iterator += strlen(Token::kw_opcode_to_cstr(memoized));
+
+        if (memoized & OP_KW_BOOLEAN) {
+            this->token_vector.push_back(
+                    new ValueToken(BOOLEAN, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                                   new bool(memoized == OPCODE_TRUE)));
+        } else {
+            this->token_vector.push_back(
+                    new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                                   new opcode_t(memoized)));
+        }
+
         NO_INCREMENT
+
         return true;
     }
 
@@ -235,7 +243,7 @@ bool LiteralProcessor::next_token_is_regex (const operator_t* const memoized) {
     }
 
     // We look at the last token in our token vector:
-    std::vector<ValueToken*>::iterator last_token = this->token_vector.end() - 1; // NOLINT(hicpp-use-auto,modernize-use-auto)
+    auto last_token = this->token_vector.end() - 1;  // std::vector<ValueToken*>::iterator
 
     while (true) {
         try {

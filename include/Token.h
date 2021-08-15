@@ -89,9 +89,9 @@ public:
 
     static bool is_line_terminator (char c);
 
-    static opcode_t cstr_to_opcode (const char* c);
+    static opcode_t kw_cstr_to_opcode (const char* c);
 
-    static const char* opcode_to_cstr (opcode_t keyword_opcode);
+    static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
 
 protected:
     const token_type_t type;

@@ -83,5 +83,5 @@ bool TokenTypeChecker::next_token_is_number () const {
 }
 
 opcode_t TokenTypeChecker::next_token_is_keyword () const {
-    return Token::cstr_to_opcode(&(*this->tokenizer_iterator));
+    return Token::kw_cstr_to_opcode(&(*this->tokenizer_iterator));
 }
