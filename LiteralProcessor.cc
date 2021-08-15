@@ -32,7 +32,7 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
         this->token_vector.push_back(
                 new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
                                new opcode_t(memoized)));
-        ++this->tokenizer_iterator;
+        NO_INCREMENT
         return true;
     }
 
