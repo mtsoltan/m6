@@ -11,9 +11,9 @@ int main (int argc, const char** argv) {
 
             const char* file_name = argv[1];
 
-            Tokenizer tokenizer(_L);
+            auto tokenizer = new Tokenizer(_L);
 
-            tokenizer.tokenize(file_name);
+            tokenizer->tokenize(file_name);
 
     _LTS
     return 0;
