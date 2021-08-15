@@ -30,7 +30,7 @@ opcode_t Token::cstr_to_opcode (const char* const c) {
     char c_copy[OP_KEYWORD_SIZE];
 
     for (; end < OP_KEYWORD_SIZE; ++end) {
-        if (Token::is_whitespace(c[end])) {
+        if (!Token::is_identifier(c[end])) {  // Keywords can only include identifier characters.
             break;
         }
     }
