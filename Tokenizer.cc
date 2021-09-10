@@ -16,7 +16,7 @@ std::vector<std::string>& Tokenizer::get_identifier_stack () {
  * @param file_contents
  * @return
  */
-std::vector<ValueToken*>&
+std::vector<Token>&
 Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
     this->tokenizer_iterator = begin;
     this->tokenizer_iterator_begin = begin;
@@ -38,7 +38,7 @@ Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string
  * @param file_contents
  * @return
  */
-std::vector<ValueToken*>& Tokenizer::tokenize (const std::string& str) {
+std::vector<Token>& Tokenizer::tokenize (const std::string& str) {
     return this->tokenize(str.begin(), str.end());
 }
 
@@ -47,7 +47,7 @@ std::vector<ValueToken*>& Tokenizer::tokenize (const std::string& str) {
  * @param file_name
  * @return
  */
-std::vector<ValueToken*>& Tokenizer::tokenize (const char* file_name) {
+std::vector<Token>& Tokenizer::tokenize (const char* file_name) {
     std::ifstream file(file_name, std::ios::binary | std::ios::in);
 
     if (file.fail()) {
@@ -76,6 +76,7 @@ std::vector<ValueToken*>& Tokenizer::tokenize (const char* file_name) {
  * @return
  */
 bool Tokenizer::process_next_token () {
+    std::string::const_iterator original_iterator = this->tokenizer_iterator;
     // Uses this->tokenizer_iterator to either process_identifier, process_number_literal, or process_symbol.
     bool rv;
 
@@ -95,14 +96,13 @@ bool Tokenizer::process_next_token () {
 
     // If it's an EOL or EOS, we just skip past it and empalce it.
     if (Token::is_line_terminator(*this->tokenizer_iterator) && (expected_type & EOL)) {
-        this->token_vector.push_back(
-                new ValueToken(EOL, UNDEFINED, this->tokenizer_iterator, ++this->tokenizer_iterator, nullptr));
+        this->token_vector.emplace_back(EOL, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }
+
     if (*this->tokenizer_iterator == ';' && (expected_type & EOS)) {
-        this->token_vector.push_back(
-                new ValueToken(EOS, UNDEFINED, this->tokenizer_iterator, ++this->tokenizer_iterator, nullptr));
+        this->token_vector.emplace_back(EOS, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }

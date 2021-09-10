@@ -91,25 +91,15 @@ public:
     static opcode_t kw_cstr_to_opcode (const char* c);
 
     static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
+    [[nodiscard]] bool cannot_precede_division ();
 
 protected:
     const token_type_t type;
     const token_subtype_t subtype;
     const std::string::const_iterator start;  // Inclusive.
     const std::string::const_iterator end;  // Not inclusive.
-};
-
-
-class ValueToken : public Token {
-public:
-    ValueToken (token_type_t type, token_subtype_t subtype,
-                std::string::const_iterator start, std::string::const_iterator end,
-                void* value_ptr);
-
-    bool cannot_precede_division ();
-
-protected:
-    void* const value_ptr;
+    void* const value_ptr;  // Set to nullptr if not used.
+    std::vector<Token> insides;  // Only used by start_end operators. This parameter gets set during keyword balancing.
 };
 
 #endif

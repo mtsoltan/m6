@@ -59,13 +59,10 @@ bool Token::is_punctuation (const char c) {
 }
 
 Token::Token (token_type_t type, token_subtype_t subtype, std::string::const_iterator start,
-              std::string::const_iterator end) : type(type), subtype(subtype), start(start), end(end) {}
+              std::string::const_iterator end, void* value_ptr)
+        : type(type), subtype(subtype), start(start), end(end), value_ptr(value_ptr) {}
 
-ValueToken::ValueToken (token_type_t type, token_subtype_t subtype, std::string::const_iterator start,
-                        std::string::const_iterator end, void* value_ptr) : Token(type, subtype, start, end),
-                                                                            value_ptr(value_ptr) {}
-
-bool ValueToken::cannot_precede_division () {
+bool Token::cannot_precede_division () {
     if (this->type == EOL) {
         // Ambiguous, check before it.
         throw 0;

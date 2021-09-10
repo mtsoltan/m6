@@ -31,11 +31,11 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 
         if (memoized & OP_KW_BOOLEAN) {
             this->token_vector.push_back(
-                    new ValueToken(BOOLEAN, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                    Token(BOOLEAN, UNDEFINED, original_iterator, this->tokenizer_iterator,
                                    new bool(memoized == OPCODE_TRUE)));
         } else {
             this->token_vector.push_back(
-                    new ValueToken(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                    Token(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
                                    new opcode_t(memoized)));
         }
 
@@ -108,7 +108,7 @@ bool LiteralProcessor::parse_range (const operator_t* const memoized) {
                         o.opcode == OPCODE_BRACES1 ? BRACES : NOTHING;
 
                 this->token_vector.push_back(
-                        new ValueToken(type, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
+                        Token(type, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
                                        this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
 
                 return true;
@@ -161,7 +161,7 @@ bool LiteralProcessor::parse_range (const operator_t* const memoized) {
         // Template literals, however, will have to wait for later because they can have subscopes.
         if (o.opcode == OPCODE_COMMENT1 || o.opcode == OPCODE_COMMENTL) {
             this->token_vector.push_back(
-                    new ValueToken(COMMENT, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+                    Token(COMMENT, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
@@ -169,7 +169,7 @@ bool LiteralProcessor::parse_range (const operator_t* const memoized) {
             // Keep in mind that value_ptr is not null-terminated.
             // This means that we'll have to be careful when it ends.
             this->token_vector.push_back(
-                    new ValueToken(STRING, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+                    Token(STRING, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
@@ -180,14 +180,14 @@ bool LiteralProcessor::parse_range (const operator_t* const memoized) {
             }
 
             this->token_vector.push_back(
-                    new ValueToken(REGEX, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+                    Token(REGEX, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
         // For now, the pre-modifiers of templates are considered separate identifiers.
         if (o.opcode == OPCODE_QTICK) {
             this->token_vector.push_back(
-                    new ValueToken(TEMPLATE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+                    Token(TEMPLATE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
@@ -198,6 +198,7 @@ bool LiteralProcessor::parse_range (const operator_t* const memoized) {
 
 
 bool LiteralProcessor::process_operator () {
+    std::string::const_iterator original_iterator = this->tokenizer_iterator;
     // We first try to process the symbol
 
     // We check the returned opcode, if it's a value token thingy, we just create the value token
@@ -224,7 +225,7 @@ bool LiteralProcessor::process_operator () {
         return this->parse_range(&o);
     } else {
         this->token_vector.push_back(
-                new ValueToken(OPERATOR, OPCODE_TO_SUBTYPE(o.opcode), this->tokenizer_iterator,
+                Token(OPERATOR, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
                                this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
         return true;
     }
@@ -247,7 +248,7 @@ bool LiteralProcessor::next_token_is_regex (const operator_t* const memoized) {
 
     while (true) {
         try {
-            if ((*last_token)->cannot_precede_division()) return true;
+            if ((*last_token).cannot_precede_division()) return true;
         } catch(error_t e) {
             last_token--;
             continue;
@@ -290,7 +291,7 @@ bool LiteralProcessor::process_identifier () {
 
     // Create a token with the identifier index in the identifier stack.
     this->token_vector.push_back(
-            new ValueToken(IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator,
+            Token(IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator,
                            new uint64_t(value)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
@@ -441,12 +442,12 @@ bool LiteralProcessor::process_number_literal () {
         accumulator_f += temp;
         accumulator_f *= sign;
         this->token_vector.push_back(
-                new ValueToken(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                Token(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
                                new double(accumulator_f)));
     } else {
         accumulator *= sign;
         this->token_vector.push_back(
-                new ValueToken(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                Token(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
                                new int64_t(accumulator)));
     }
 

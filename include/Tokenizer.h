@@ -7,11 +7,11 @@ class Tokenizer : public LiteralProcessor {
 public:
     explicit Tokenizer (int log_handler (const char*, ...));
 
-    std::vector<ValueToken*>& tokenize (const char* file_name);
+    std::vector<Token>& tokenize (const char* file_name);
 
-    std::vector<ValueToken*>& tokenize (const std::string& str);
+    std::vector<Token>& tokenize (const std::string& str);
 
-    std::vector<ValueToken*>& tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end);
+    std::vector<Token>& tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end);
 
     std::vector<std::string>& get_identifier_stack ();
 

@@ -29,7 +29,7 @@ public:
 protected:
     int (* log_handler) (const char*, ...);
 
-    std::vector<ValueToken*> token_vector;
+    std::vector<Token> token_vector;
 
     std::string::const_iterator tokenizer_iterator;
     std::string::const_iterator tokenizer_iterator_begin;
