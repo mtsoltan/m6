@@ -54,15 +54,10 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
  * Otherwise it throws.
  * @return
  */
-bool LiteralProcessor::parse_range (const operator_t* const memoized) {
+bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
     std::string::const_iterator original_iterator = this->tokenizer_iterator;
 
-    operator_t o;
-    if (memoized == nullptr) {
-        o = this->process_symbol();
-    } else {
-        o = *memoized;
-    }
+    operator_t o = memoized.has_value() ? memoized.value() : this->process_symbol();
 
     const char* end_operator;
 
@@ -211,7 +206,7 @@ bool LiteralProcessor::process_operator () {
 
     // We have to be very careful on OPCODE_DIV which can be the regex starter.
     // We call LiteralProcessor->next_token_is_regex to find out.
-    if (this->next_token_is_regex(&o)) {
+    if (this->next_token_is_regex(o)) {
         o.opcode = OPCODE_REGEX;
     }
 
@@ -222,7 +217,7 @@ bool LiteralProcessor::process_operator () {
         }
 
         // If it's a start operator, we need to find its end.
-        return this->parse_range(&o);
+        return this->parse_range(o);
     } else {
         this->token_vector.push_back(
                 Token(OPERATOR, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
@@ -231,13 +226,8 @@ bool LiteralProcessor::process_operator () {
     }
 }
 
-bool LiteralProcessor::next_token_is_regex (const operator_t* const memoized) {
-    operator_t o;
-    if (memoized == nullptr) {
-        o = this->process_symbol();
-    } else {
-        o = *memoized;
-    }
+bool LiteralProcessor::next_token_is_regex (const std::optional<operator_t> memoized) {
+    operator_t o = memoized.has_value() ? memoized.value() : this->process_symbol();
 
     if (o.opcode != OPCODE_DIV) {  // If it doesn't start with the division symbol, it can't be regex.
         return false;

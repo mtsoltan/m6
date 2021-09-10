@@ -29,9 +29,9 @@ protected:
 
     bool process_operator ();
 
-    bool parse_range (const operator_t* memoized);
+    bool parse_range (const std::optional<operator_t> memoized);
 
-    bool next_token_is_regex (const operator_t* memoized);
+    bool next_token_is_regex (const std::optional<operator_t> memoized);
 };
 
 
