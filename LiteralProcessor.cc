@@ -62,7 +62,7 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
     const char* end_operator;
 
     try {
-        char* c_copy = new char[o.size + 1];
+        char c_copy[MAX_OPERATOR_SIZE + 1];  // + 1 for \0.
         strncpy(c_copy, &(*original_iterator), o.size);
         c_copy[o.size] = '\0';
 
