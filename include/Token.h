@@ -95,6 +95,12 @@ public:
 
     [[nodiscard]] bool cannot_precede_division ();
 
+    [[nodiscard]] bool is_whitespace ();
+
+    [[nodiscard]] bool is_comment ();
+
+    [[nodiscard]] bool is_discardable ();
+
 protected:
     const token_type_t type;
     const token_subtype_t subtype;

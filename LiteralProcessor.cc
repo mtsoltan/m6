@@ -234,7 +234,9 @@ bool LiteralProcessor::next_token_is_regex (const std::optional<operator_t> memo
     }
 
     // We look at the last token in our token vector:
-    auto last_token = this->token_vector.end() - 1;  // std::vector<ValueToken*>::iterator
+    auto last_token = this->token_vector.end();  // std::vector<Token>::iterator
+
+    while ((*--last_token).is_discardable());  // Comments and whitespace should not affect our lookbehind.
 
     while (true) {
         try {

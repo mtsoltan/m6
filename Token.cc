@@ -124,3 +124,15 @@ bool Token::cannot_precede_division () {
     // Identifiers, numbers, strings, booleans, brackets, templates, regex (whitespace do not exist).
     return false;  // all have to preceed division.
 }
+
+bool Token::is_whitespace () {
+    return this->type == WHITESPACE;
+}
+
+bool Token::is_comment () {
+    return this->type == COMMENT;
+}
+
+bool Token::is_discardable () {
+    return this->is_whitespace() || this->is_comment();
+}
