@@ -88,7 +88,8 @@ bool Tokenizer::process_next_token () {
 
     // If it's whitespace, we just skip past it and do nothing.
     if (Token::is_whitespace(*this->tokenizer_iterator) && (expected_type & WHITESPACE)) {
-        ++this->tokenizer_iterator;
+        while (Token::is_whitespace(*(++this->tokenizer_iterator)));
+        this->token_vector.emplace_back(WHITESPACE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }
