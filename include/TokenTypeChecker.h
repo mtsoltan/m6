@@ -4,8 +4,7 @@
 #include <fstream>
 #include <algorithm>  // Includes <vector> as well.
 
-#include <toplev.h>
-#include <Token.h>
+#include <Token.h>  // Includes <toplev.h> as well.
 
 // NO_INCREMENT is used to signal that the token iterator has reached the character after this token ended,
 // and does not need to be incremented to reach it.
@@ -32,11 +31,8 @@ public:
 protected:
     int (* log_handler) (const char*, ...);
 
-    std::vector<Token> token_vector;
-
+    Token* base_token;
     std::string::const_iterator tokenizer_iterator;
-    std::string::const_iterator tokenizer_iterator_begin;
-    std::string::const_iterator tokenizer_iterator_end;
 
     [[nodiscard]] operator_t process_symbol () const;
 

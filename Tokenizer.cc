@@ -16,11 +16,20 @@ std::vector<std::string>& Tokenizer::get_identifier_stack () {
  * @param file_contents
  * @return
  */
-std::vector<Token>&
+Token
 Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+    // We need to make a reference to what the previous base token and token iterator were.
+    // This is so that recursive calls of this function can work properly.
+    // This is similar to pushing to stack in the figurative sense.
+    auto old_tokenizer_iterator = this->tokenizer_iterator;
+    auto old_base_token = this->base_token;
+
     this->tokenizer_iterator = begin;  // Copy assign begin and end here.
-    this->tokenizer_iterator_begin = begin;
-    this->tokenizer_iterator_end = end;
+
+    auto rv = Token(ROOT, UNDEFINED, begin, end, nullptr);
+    rv.token_vector.reserve(TOKEN_VECTOR_RESERVE);
+
+    this->base_token = &rv;
 
     // Attempt to process the next token forever till process_next_token returns false.
     // It will return false when done or when it encounters an error.
@@ -30,15 +39,9 @@ Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string
         throw ERR_TOKENIZING_SYNTAX_ERROR;
     }
 
-    return this->token_vector;
-}
-
-std::string Tokenizer::colorized_output () {
-    std::string rv;
-
-    for (auto& token: this->token_vector) {
-        rv += token.to_string();
-    }
+    // We return them as they were. You can consider this an action similar to popping a stack.
+    this->tokenizer_iterator = old_tokenizer_iterator;
+    this->base_token = old_base_token;
 
     return rv;
 }
@@ -48,7 +51,7 @@ std::string Tokenizer::colorized_output () {
  * @param file_contents
  * @return
  */
-std::vector<Token>& Tokenizer::tokenize (const std::string& str) {
+Token Tokenizer::tokenize (const std::string& str) {
     return this->tokenize(str.begin(), str.end());
 }
 
@@ -57,7 +60,7 @@ std::vector<Token>& Tokenizer::tokenize (const std::string& str) {
  * @param file_name
  * @return
  */
-std::vector<Token>& Tokenizer::tokenize (const char* file_name) {
+Token Tokenizer::tokenize (const char* file_name) {
     std::ifstream file(file_name, std::ios::binary | std::ios::in);
 
     if (file.fail()) {
@@ -99,20 +102,23 @@ bool Tokenizer::process_next_token () {
     // If it's whitespace, we just skip past it and do nothing.
     if (Token::is_whitespace(*this->tokenizer_iterator) && (expected_type & WHITESPACE)) {
         while (Token::is_whitespace(*(++this->tokenizer_iterator)));
-        this->token_vector.emplace_back(WHITESPACE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr);
+        this->base_token->token_vector.emplace_back(
+                WHITESPACE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }
 
     // If it's an EOL or EOS, we just skip past it and empalce it.
     if (Token::is_line_terminator(*this->tokenizer_iterator) && (expected_type & EOL)) {
-        this->token_vector.emplace_back(EOL, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
+        this->base_token->token_vector.emplace_back(
+                EOL, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }
 
     if (*this->tokenizer_iterator == ';' && (expected_type & EOS)) {
-        this->token_vector.emplace_back(EOS, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
+        this->base_token->token_vector.emplace_back(
+                EOS, UNDEFINED, original_iterator, ++this->tokenizer_iterator, nullptr);
         rv = true;
         goto expect;
     }

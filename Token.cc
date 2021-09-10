@@ -59,9 +59,9 @@ bool Token::is_punctuation (const char c) {
     return false;
 }
 
-Token::Token (token_type_t type, token_subtype_t subtype, std::string::const_iterator start,
+Token::Token (token_type_t type, token_subtype_t subtype, std::string::const_iterator begin,
               std::string::const_iterator end, void* value_ptr)
-        : type(type), subtype(subtype), start(start), end(end), value_ptr(value_ptr) {}
+        : type(type), subtype(subtype), begin(begin), end(end), value_ptr(value_ptr) {}
 
 bool Token::cannot_precede_division () {
     if (this->type == EOL) {
@@ -159,7 +159,7 @@ std::string Token::to_string () {
             J = K; break;
     }
 
-    std::string rv = J + std::string(this->start, this->end) + K;
+    std::string rv = J + std::string(this->begin, this->end) + K;
     return rv;
 }
 
@@ -173,4 +173,23 @@ bool Token::is_comment () {
 
 bool Token::is_discardable () {
     return this->is_whitespace() || this->is_comment();
+}
+
+std::string::const_iterator Token::get_begin () {
+    return this->begin;
+}
+
+std::string::const_iterator Token::get_end () {
+    return this->end;
+}
+
+
+std::string Token::colorized_output () {
+    std::string rv;
+
+    for (auto& token: this->token_vector) {
+        rv += token.to_string();
+    }
+
+    return rv;
 }

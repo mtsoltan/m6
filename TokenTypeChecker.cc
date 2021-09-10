@@ -1,8 +1,6 @@
 #include <TokenTypeChecker.h>
 
-TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) : log_handler(log_handler) {
-    this->token_vector.reserve(TOKEN_VECTOR_RESERVE);
-}
+TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) : log_handler(log_handler) {}
 
 /**
  * Once we know that we've encountered a symbol, we can process it using this method.
@@ -55,11 +53,11 @@ operator_t TokenTypeChecker::process_symbol () const {
 }
 
 int64_t TokenTypeChecker::get_char_offset () const {
-    if (this->tokenizer_iterator == this->tokenizer_iterator_end || *this->tokenizer_iterator == '\0') {
+    if (this->tokenizer_iterator == this->base_token->get_end() || *this->tokenizer_iterator == '\0') {
         return NOT_FOUND;  // This whole function needs to be signed, because NOT_FOUND is negative.
     }
 
-    return this->tokenizer_iterator - this->tokenizer_iterator_begin;
+    return this->tokenizer_iterator - this->base_token->get_begin();
 }
 
 bool TokenTypeChecker::next_token_is_number () const {

@@ -242,6 +242,6 @@ const opcode_cstr_map& get_kw_opcode_cstr_map ();
 
 const cstr_opcode_map& get_kw_cstr_opcode_map ();
 
-const cstr_cstr_map& get_start_end_map ();
+const cstr_cstr_map& get_begin_end_map ();
 
 #endif

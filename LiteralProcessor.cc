@@ -30,13 +30,13 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
         this->tokenizer_iterator += strlen(Token::kw_opcode_to_cstr(memoized));
 
         if (memoized & OP_KW_BOOLEAN) {
-            this->token_vector.push_back(
-                    Token(BOOLEAN, UNDEFINED, original_iterator, this->tokenizer_iterator,
-                                   new bool(memoized == OPCODE_TRUE)));
+            this->base_token->token_vector.push_back(Token(
+                    BOOLEAN, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                    new bool(memoized == OPCODE_TRUE)));
         } else {
-            this->token_vector.push_back(
-                    Token(KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
-                                   new opcode_t(memoized)));
+            this->base_token->token_vector.push_back(Token(
+                    KEYWORD, UNDEFINED, original_iterator, this->tokenizer_iterator,
+                    new opcode_t(memoized)));
         }
 
         NO_INCREMENT
@@ -66,7 +66,7 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
         strncpy(c_copy, &(*original_iterator), o.size);
         c_copy[o.size] = '\0';
 
-        end_operator = get_start_end_map().at(c_copy);
+        end_operator = get_begin_end_map().at(c_copy);
     } catch (const std::out_of_range& e) {
         throw ERR_INVALID_START_OPERATOR;
     }
@@ -77,13 +77,13 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
         int64_t nesting_level = 0;
         while (nesting_level >= 0) {
             // Find next start/end operators and increment decrement nesting level until it hits -1.
-            bool start_found, end_found, string_ended;
+            bool begin_found, end_found, string_ended;
             while (
-                    !(start_found = strncmp(&(*++this->tokenizer_iterator), &(*original_iterator), o.size) == 0) &&
+                    !(begin_found = strncmp(&(*++this->tokenizer_iterator), &(*original_iterator), o.size) == 0) &&
                     !(end_found = strncmp(&(*this->tokenizer_iterator), end_operator, end_size) == 0) &&
                     !(string_ended = this->get_char_offset() == NOT_FOUND)
                     );
-            if (start_found) {
+            if (begin_found) {
                 ++nesting_level;
             }
             if (end_found) {
@@ -102,9 +102,9 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
                         o.opcode == OPCODE_BRACKET1 ? BRACKETS :
                         o.opcode == OPCODE_BRACES1 ? BRACES : NOTHING;
 
-                this->token_vector.push_back(
-                        Token(type, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
-                                       this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
+                this->base_token->token_vector.push_back(Token(
+                        type, OPCODE_TO_SUBTYPE(o.opcode),
+                        original_iterator, this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
 
                 return true;
             }
@@ -155,34 +155,34 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
 
         // Template literals, however, will have to wait for later because they can have subscopes.
         if (o.opcode == OPCODE_COMMENT1 || o.opcode == OPCODE_COMMENTL) {
-            this->token_vector.push_back(
-                    Token(COMMENT, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            this->base_token->token_vector.push_back(Token(
+                    COMMENT, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
         if (o.opcode == OPCODE_QDOUBLE || o.opcode == OPCODE_QSINGLE) {
             // Keep in mind that value_ptr is not null-terminated.
             // This means that we'll have to be careful when it ends.
-            this->token_vector.push_back(
-                    Token(STRING, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            this->base_token->token_vector.push_back(Token(
+                    STRING, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
         // If it's a regex, any identifiers stuck to it will be post-modifiers.
         if (o.opcode == OPCODE_REGEX) {
-            while(Token::is_identifier(*this->tokenizer_iterator)) {
+            while (Token::is_identifier(*this->tokenizer_iterator)) {
                 this->tokenizer_iterator++;
             }
 
-            this->token_vector.push_back(
-                    Token(REGEX, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            this->base_token->token_vector.push_back(Token(
+                    REGEX, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
         // For now, the pre-modifiers of templates are considered separate identifiers.
         if (o.opcode == OPCODE_QTICK) {
-            this->token_vector.push_back(
-                    Token(TEMPLATE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
+            this->base_token->token_vector.push_back(Token(
+                    TEMPLATE, UNDEFINED, original_iterator, this->tokenizer_iterator, nullptr));
             return true;
         }
 
@@ -219,9 +219,9 @@ bool LiteralProcessor::process_operator () {
         // If it's a start operator, we need to find its end.
         return this->parse_range(o);
     } else {
-        this->token_vector.push_back(
-                Token(OPERATOR, OPCODE_TO_SUBTYPE(o.opcode), original_iterator,
-                               this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
+        this->base_token->token_vector.push_back(Token(
+                OPERATOR, OPCODE_TO_SUBTYPE(o.opcode),
+                original_iterator, this->tokenizer_iterator += o.size, new opcode_t(o.opcode)));
         return true;
     }
 }
@@ -234,14 +234,14 @@ bool LiteralProcessor::next_token_is_regex (const std::optional<operator_t> memo
     }
 
     // We look at the last token in our token vector:
-    auto last_token = this->token_vector.end();  // std::vector<Token>::iterator
+    auto last_token = this->base_token->token_vector.end();  // std::vector<Token>::iterator
 
     while ((*--last_token).is_discardable());  // Comments and whitespace should not affect our lookbehind.
 
     while (true) {
         try {
             if ((*last_token).cannot_precede_division()) return true;
-        } catch(error_t e) {
+        } catch (error_t e) {
             last_token--;
             continue;
         }
@@ -282,9 +282,8 @@ bool LiteralProcessor::process_identifier () {
     }
 
     // Create a token with the identifier index in the identifier stack.
-    this->token_vector.push_back(
-            Token(IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator,
-                           new uint64_t(value)));
+    this->base_token->token_vector.push_back(Token(
+            IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator, new uint64_t(value)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
     // we have reached something that isn't part of this identifier.
@@ -433,14 +432,14 @@ bool LiteralProcessor::process_number_literal () {
         while (temp > 1) temp /= 10;
         accumulator_f += temp;
         accumulator_f *= sign;
-        this->token_vector.push_back(
-                Token(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
-                               new double(accumulator_f)));
+        this->base_token->token_vector.push_back(Token(
+                NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                new double(accumulator_f)));
     } else {
         accumulator *= sign;
-        this->token_vector.push_back(
-                Token(NUMBER, subtype, original_iterator, this->tokenizer_iterator,
-                               new int64_t(accumulator)));
+        this->base_token->token_vector.push_back(Token(
+                NUMBER, subtype, original_iterator, this->tokenizer_iterator,
+                new int64_t(accumulator)));
     }
 
     return true;

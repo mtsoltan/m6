@@ -14,9 +14,9 @@ int main (int argc, const char** argv) {
 
             auto tokenizer = Tokenizer(_L);
 
-            tokenizer.tokenize(file_name);
+            auto result = tokenizer.tokenize(file_name);
 
-            std::cout << tokenizer.colorized_output();
+            std::cout << result.colorized_output();
 
     _LTS
     return 0;
