@@ -56,11 +56,10 @@ std::vector<Token>& Tokenizer::tokenize (const char* file_name) {
 
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
-        const std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        this->content = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
         file.close();
-        this->log_handler("We now have the contents:\n%s\n", str.c_str());
-        return this->tokenize(str);
+        return this->tokenize(this->content);
     }
 
     throw ERR_IFSTREAM_FAILED;

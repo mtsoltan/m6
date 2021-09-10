@@ -17,6 +17,7 @@ public:
 
 protected:
     bool process_next_token ();
+    std::string content;
 };
 
 
