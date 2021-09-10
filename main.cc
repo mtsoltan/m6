@@ -1,4 +1,5 @@
 #include <Tokenizer.h>
+#include <iostream>
 
 // TODO: https://github.com/mtsoltan/m6/issues/14
 // TODO: https://github.com/mtsoltan/m6/issues/17
@@ -15,6 +16,7 @@ int main (int argc, const char** argv) {
 
             tokenizer.tokenize(file_name);
 
+            std::cout << tokenizer.colorized_output();
 
     _LTS
     return 0;
