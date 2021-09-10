@@ -1,7 +1,6 @@
 #include <TokenTypeChecker.h>
 
-TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) {
-    this->log_handler = log_handler;
+TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) : log_handler(log_handler) {
     this->token_vector.reserve(TOKEN_VECTOR_RESERVE);
 }
 

@@ -2,7 +2,7 @@
 #define M6_TOKENTYPECHECKER_H
 
 #include <fstream>
-#include <algorithm>
+#include <algorithm>  // Includes <vector> as well.
 
 #include <toplev.h>
 #include <Token.h>
@@ -17,10 +17,13 @@
 
 #define TOKEN_VECTOR_RESERVE         0x00'04'00
 
+/* Defines an operator as an opcode_t opcode, while passing information about the uint8_t size
+ * (length in characters) the operator is taking, so we can iterate past it.
+ */
 typedef struct {
     opcode_t opcode;
     uint8_t size;
-} operator_t;
+} __attribute__((aligned(16))) operator_t;
 
 class TokenTypeChecker {
 public:

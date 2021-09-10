@@ -18,7 +18,7 @@ std::vector<std::string>& Tokenizer::get_identifier_stack () {
  */
 std::vector<Token>&
 Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
-    this->tokenizer_iterator = begin;
+    this->tokenizer_iterator = begin;  // Copy assign begin and end here.
     this->tokenizer_iterator_begin = begin;
     this->tokenizer_iterator_end = end;
 
@@ -77,7 +77,7 @@ std::vector<Token>& Tokenizer::tokenize (const char* file_name) {
 bool Tokenizer::process_next_token () {
     std::string::const_iterator original_iterator = this->tokenizer_iterator;
     // Uses this->tokenizer_iterator to either process_identifier, process_number_literal, or process_symbol.
-    bool rv;
+    bool rv = false;
 
     // First, we check what we're expecting.
     token_type_t expected_type = this->unexpect();
@@ -135,8 +135,7 @@ bool Tokenizer::process_next_token () {
         goto expect;
     }
 
-    // We have run into an invalid sequence.
-    rv = false;
+    // If execution reaches this point, we have run into an invalid sequence.
 
     expect:
     // If we have nothing queued to uninspect on the next call, we'll just expect ANYTHING.

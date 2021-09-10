@@ -2,6 +2,7 @@
 #define M6_TOKEN_H
 
 #include <cstring>
+#include <vector>
 
 #include <opcodes.h>
 #include <toplev.h>
@@ -40,6 +41,12 @@
 #define PARENTHESES  ((token_type_t) (1u << 13u) | RANGE_TOKEN)
 #define BRACKETS     ((token_type_t) (1u << 14u) | RANGE_TOKEN)
 #define BRACES       ((token_type_t) (1u << 15u) | RANGE_TOKEN)
+
+/*
+ * Braces/brackets/parentheses are first initalized undecided in LiteralProcessor::parse_range.
+ * They get decided by the keyword balancer, which then changes the value of their opcode to something
+ * that passes opcode & OP_DECIDED.
+ */
 
 // Common Subtypes
 // Identifiers, booleans, whitespace, eol, eos, string, template,
@@ -94,6 +101,8 @@ public:
     [[nodiscard]] static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
 
     [[nodiscard]] bool cannot_precede_division ();
+
+    [[nodiscard]] std::string to_string ();
 
     [[nodiscard]] bool is_whitespace ();
 
