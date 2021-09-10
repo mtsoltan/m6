@@ -116,7 +116,7 @@ protected:
     const std::string::const_iterator start;  // Inclusive.
     const std::string::const_iterator end;  // Not inclusive.
     void* const value_ptr;  // Set to nullptr if not used.
-    std::vector<Token> insides;  // Only used by start_end operators. This parameter gets set during keyword balancing.
+    std::vector<Token> subscope;  // Only used by start_end operators. This parameter gets set during keyword balancing.
 };
 
 #endif
