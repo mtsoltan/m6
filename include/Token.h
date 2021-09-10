@@ -76,21 +76,22 @@ public:
     Token (token_type_t type, token_subtype_t subtype,
            std::string::const_iterator start, std::string::const_iterator end);
 
-    static bool is_digit (char c);
+    [[nodiscard]] static bool is_digit (char c);
 
-    static bool is_hexadecimal_digit (char c);
+    [[nodiscard]] static bool is_hexadecimal_digit (char c);
 
-    static bool is_identifier (char c);
+    [[nodiscard]] static bool is_identifier (char c);
 
-    static bool is_whitespace (char c);
+    [[nodiscard]] static bool is_whitespace (char c);
 
-    static bool is_punctuation (char c);
+    [[nodiscard]] static bool is_punctuation (char c);
 
-    static bool is_line_terminator (char c);
+    [[nodiscard]] static bool is_line_terminator (char c);
 
-    static opcode_t kw_cstr_to_opcode (const char* c);
+    [[nodiscard]] static opcode_t kw_cstr_to_opcode (const char* c);
 
-    static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
+    [[nodiscard]] static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
+
     [[nodiscard]] bool cannot_precede_division ();
 
 protected:
