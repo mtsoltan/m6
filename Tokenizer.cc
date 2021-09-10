@@ -6,10 +6,6 @@ Tokenizer::Tokenizer (int log_handler (const char*, ...)) : LiteralProcessor(log
     this->expect(ANYTHING);
 }
 
-std::vector<std::string>& Tokenizer::get_identifier_stack () {
-    return this->identifier_stack;
-}
-
 /**
  * Attempts to tokenize a given two iterators for the start and end of a string or string segment.
  *

@@ -13,8 +13,6 @@ public:
 
     Token tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end);
 
-    std::vector<std::string>& get_identifier_stack ();
-
 protected:
     bool process_next_token ();
 

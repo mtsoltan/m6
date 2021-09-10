@@ -61,7 +61,9 @@ bool Token::is_punctuation (const char c) {
 
 Token::Token (token_type_t type, token_subtype_t subtype, std::string::const_iterator begin,
               std::string::const_iterator end, void* value_ptr)
-        : type(type), subtype(subtype), begin(begin), end(end), value_ptr(value_ptr) {}
+        : type(type), subtype(subtype), begin(begin), end(end), value_ptr(value_ptr) {
+    this->identifier_stack.reserve(IDENTIFIER_STACK_RESERVE);
+}
 
 bool Token::cannot_precede_division () {
     if (this->type == EOL) {

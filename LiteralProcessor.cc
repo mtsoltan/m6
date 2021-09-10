@@ -2,11 +2,6 @@
 
 // TODO: https://github.com/mtsoltan/m6/issues/1
 
-LiteralProcessor::LiteralProcessor (int log_handler (const char*, ...)) : TokenTypeChecker(log_handler) {
-    // Overload the constructor.
-    this->identifier_stack.reserve(IDENTIFIER_STACK_RESERVE);
-}
-
 /**
  * This function is used to let TokenTypeChecker::process_next_token know what we're expecting next.
  * For example, numbers expect whitespace or operators after them, while operators are okay
@@ -270,20 +265,37 @@ bool LiteralProcessor::process_identifier () {
     }
 
     std::string identifier = std::string(original_iterator, this->tokenizer_iterator);
-    auto position = std::find(this->identifier_stack.begin(), this->identifier_stack.end(), identifier);
 
-    uint64_t value;  // An index in a vector, unsigned.
+    // This is the base_token of this LiteralProcessor. In the loop below, it will keep bubbling up
+    // through parents.
+    auto curent_token = this->base_token;
+    std::vector<std::string>::iterator position;
+    while (true) {
+        position = std::find(
+                curent_token->identifier_stack.begin(), curent_token->identifier_stack.end(), identifier);
+        if (position == curent_token->identifier_stack.end()) {
+            // If we don't find the identifier:
+            if (curent_token->parent != nullptr) {
+                // If a parent exists, we bubble up.
+                curent_token = curent_token->parent;
+            } else {
+                // If we bubbled up all the way to the end and didn't find that specific identifier,
+                // we just push to the bottom-most scope (the base token).
+                this->base_token->identifier_stack.push_back(identifier);
+                break;
+            }
+        } else {
+            // If we find the identifier somewhere, we just break since position is now at the value we want it.
+            break;
+        }
 
-    if (position == this->identifier_stack.end()) {
-        value = this->identifier_stack.size();
-        this->identifier_stack.push_back(identifier);
-    } else {
-        value = position - this->identifier_stack.begin();
+
     }
 
     // Create a token with the identifier index in the identifier stack.
     this->base_token->token_vector.push_back(Token(
-            IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator, new uint64_t(value)));
+            IDENTIFIER, UNDEFINED, original_iterator, this->tokenizer_iterator,
+            (void*)(&*position)));
 
     // We don't need to increment in this function because no matter what way the for ends (the break or normal end),
     // we have reached something that isn't part of this identifier.

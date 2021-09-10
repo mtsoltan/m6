@@ -7,6 +7,7 @@
 #include <opcodes.h>
 #include <toplev.h>
 
+#define IDENTIFIER_STACK_RESERVE     0x00'00'80
 #define PUNCTUATION_CHARACTERS "/?.>,<'\":]}[{=+-)(*&^%!`~"
 #define WHITESPACE_CHARACTERS "\t\r\v\f "
 
@@ -118,6 +119,8 @@ public:
     std::string colorized_output ();
 
     std::vector<Token> token_vector;
+    std::vector<std::string> identifier_stack;
+    Token* parent;
 protected:
     const token_type_t type;
     const token_subtype_t subtype;
