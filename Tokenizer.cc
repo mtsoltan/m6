@@ -33,6 +33,16 @@ Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string
     return this->token_vector;
 }
 
+std::string Tokenizer::colorized_output () {
+    std::string rv;
+
+    for (auto& token: this->token_vector) {
+        rv += token.to_string();
+    }
+
+    return rv;
+}
+
 /**
  * Attempts to tokenize a given string, usually a file contents.
  * @param file_contents

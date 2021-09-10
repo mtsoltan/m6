@@ -15,6 +15,7 @@ public:
 
     std::vector<std::string>& get_identifier_stack ();
 
+    std::string colorized_output ();
 protected:
     bool process_next_token ();
     std::string content;

@@ -1,4 +1,5 @@
 #include <Token.h>
+#include <colors.h>
 
 bool Token::is_digit (const char c) {
     return c >= '0' && c <= '9';
@@ -123,6 +124,43 @@ bool Token::cannot_precede_division () {
 
     // Identifiers, numbers, strings, booleans, brackets, templates, regex (whitespace do not exist).
     return false;  // all have to preceed division.
+}
+
+std::string Token::to_string () {
+    using namespace srilakshmikanthanp;
+    static const std::string
+            R = ansi::str(ansi::fg_red),
+            G = ansi::str(ansi::fg_green),
+            B = ansi::str(ansi::fg_blue),
+            C = ansi::str(ansi::fg_cyan),
+            M = ansi::str(ansi::fg_magenta),
+            Y = ansi::str(ansi::fg_yellow),
+            K = ansi::str(ansi::reset);
+
+    std::string J;
+
+    switch (this->type) {
+        case IDENTIFIER:
+            J = R; break;
+        case NUMBER:
+        case BOOLEAN:
+            J = G; break;
+        case OPERATOR:
+            J = B; break;
+        case KEYWORD:
+            J = C; break;
+        case STRING:
+        case REGEX:
+        case TEMPLATE:
+            J = M; break;
+        case COMMENT:
+            J = Y; break;
+        default:
+            J = K; break;
+    }
+
+    std::string rv = J + std::string(this->start, this->end) + K;
+    return rv;
 }
 
 bool Token::is_whitespace () {
