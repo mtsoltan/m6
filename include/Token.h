@@ -74,7 +74,8 @@ typedef uint64_t token_subtype_t;
 class Token {
 public:
     Token (token_type_t type, token_subtype_t subtype,
-           std::string::const_iterator start, std::string::const_iterator end);
+            std::string::const_iterator start, std::string::const_iterator end,
+    void* value_ptr);
 
     [[nodiscard]] static bool is_digit (char c);
 
