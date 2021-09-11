@@ -1,11 +1,7 @@
 #ifndef M6_TOKEN_H
 #define M6_TOKEN_H
 
-#include <cstring>
-#include <vector>
-
 #include <opcodes.h>
-#include <toplev.h>
 
 #define IDENTIFIER_STACK_RESERVE     0x00'00'80
 #define PUNCTUATION_CHARACTERS "/?.>,<'\":]}[{=+-)(*&^%!`~"
@@ -83,24 +79,24 @@ typedef uint64_t token_subtype_t;
 class Token {
 public:
     Token (token_type_t type, token_subtype_t subtype,
-           std::string::const_iterator begin, std::string::const_iterator end,
+           std::u16string::const_iterator begin, std::u16string::const_iterator end,
            void* value_ptr);
 
-    [[nodiscard]] static bool is_digit (char c);
+    [[nodiscard]] static bool is_digit (char16_t c);
 
-    [[nodiscard]] static bool is_hexadecimal_digit (char c);
+    [[nodiscard]] static bool is_hexadecimal_digit (char16_t c);
 
-    [[nodiscard]] static bool is_identifier (char c);
+    [[nodiscard]] static bool is_identifier (char16_t c);
 
-    [[nodiscard]] static bool is_whitespace (char c);
+    [[nodiscard]] static bool is_whitespace (char16_t c);
 
-    [[nodiscard]] static bool is_punctuation (char c);
+    [[nodiscard]] static bool is_punctuation (char16_t c);
 
-    [[nodiscard]] static bool is_line_terminator (char c);
+    [[nodiscard]] static bool is_line_terminator (char16_t c);
 
-    [[nodiscard]] static opcode_t kw_cstr_to_opcode (const char* c);
+    [[nodiscard]] static opcode_t kw_cstr_to_opcode (const char16_t* c);
 
-    [[nodiscard]] static const char* kw_opcode_to_cstr (opcode_t keyword_opcode);
+    [[nodiscard]] static const char16_t* kw_opcode_to_cstr (opcode_t keyword_opcode);
 
     [[nodiscard]] bool cannot_precede_division ();
 
@@ -112,20 +108,20 @@ public:
 
     [[nodiscard]] bool is_discardable ();
 
-    [[nodiscard]] std::string::const_iterator get_begin ();
+    [[nodiscard]] std::u16string::const_iterator get_begin ();
 
-    [[nodiscard]] std::string::const_iterator get_end ();
+    [[nodiscard]] std::u16string::const_iterator get_end ();
 
     std::string colorized_output ();
 
     std::vector<Token> token_vector;
-    std::vector<std::string> identifier_stack;
+    std::vector<std::u16string> identifier_stack;
     Token* parent;
 protected:
     const token_type_t type;
     const token_subtype_t subtype;
-    const std::string::const_iterator begin;  // Inclusive.
-    const std::string::const_iterator end;  // Not inclusive.
+    const std::u16string::const_iterator begin;  // Inclusive.
+    const std::u16string::const_iterator end;  // Not inclusive.
     void* const value_ptr;  // Set to nullptr if not used.
 };
 

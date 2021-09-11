@@ -9,14 +9,14 @@ public:
 
     Token tokenize (const char* file_name);
 
-    Token tokenize (const std::string& str);
+    Token tokenize (const std::u16string& str);
 
-    Token tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end);
+    Token tokenize (const std::u16string::const_iterator& begin, const std::u16string::const_iterator& end);
 
 protected:
     bool process_next_token ();
 
-    std::string content;
+    std::u16string content;
 };
 
 

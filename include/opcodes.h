@@ -2,11 +2,8 @@
 #define M6_OPCODES_H
 
 // TODO: https://github.com/mtsoltan/m6/issues/15
-#include <map>
-#include <cinttypes>
-#include <cstring>
 
-#include <errors.h>
+#include <toplev.h>
 
 #define MAX_OPERATOR_SIZE 4
 
@@ -225,14 +222,19 @@ enum opcode_enum_t : opcode_t {
 };
 
 struct char_cmp {
-    bool operator() (const char* a, const char* b) const {
-        return strcmp(a, b) < 0;
+    bool operator() (const char16_t* a, const char16_t* b) const {
+        auto la = std::char_traits<char16_t>::length(a),
+             lb = std::char_traits<char16_t>::length(b);
+        if (la != lb) {
+            return la < lb;
+        }
+        return std::char_traits<char16_t>::compare(a, b, la) < 0;
     }
 };
 
-typedef std::map<opcode_t, const char*> opcode_cstr_map;
-typedef std::map<const char*, opcode_t, char_cmp> cstr_opcode_map;
-typedef std::map<const char*, const char*, char_cmp> cstr_cstr_map;
+typedef std::map<opcode_t, const char16_t*> opcode_cstr_map;
+typedef std::map<const char16_t*, opcode_t, char_cmp> cstr_opcode_map;
+typedef std::map<const char16_t*, const char16_t*, char_cmp> cstr_cstr_map;
 
 const opcode_cstr_map& get_op_opcode_cstr_map (uint8_t operator_size = 0);
 

@@ -1,9 +1,6 @@
 #ifndef M6_TOKENTYPECHECKER_H
 #define M6_TOKENTYPECHECKER_H
 
-#include <fstream>
-#include <algorithm>  // Includes <vector> as well.
-
 #include <Token.h>  // Includes <toplev.h> as well.
 
 // NO_INCREMENT is used to signal that the token iterator has reached the character after this token ended,
@@ -32,7 +29,7 @@ protected:
     int (* log_handler) (const char*, ...);
 
     Token* base_token;
-    std::string::const_iterator tokenizer_iterator;
+    std::u16string::const_iterator tokenizer_iterator;
 
     [[nodiscard]] operator_t process_symbol () const;
 

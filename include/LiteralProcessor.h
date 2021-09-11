@@ -1,8 +1,6 @@
 #ifndef M6_LITERALPROCESSOR_H
 #define M6_LITERALPROCESSOR_H
 
-#include <cstring>
-
 #include <TokenTypeChecker.h>
 
 #define LOG_EXPECTING_BUFFER_N ((uint8_t) 2)

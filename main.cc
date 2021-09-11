@@ -1,5 +1,5 @@
 #include <Tokenizer.h>
-#include <iostream>
+#include <iostream>  // Specified here because nothing else should need it, so it's not toplev.
 
 // TODO: https://github.com/mtsoltan/m6/issues/14
 // TODO: https://github.com/mtsoltan/m6/issues/17

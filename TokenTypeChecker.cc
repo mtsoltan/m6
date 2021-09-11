@@ -10,9 +10,9 @@ TokenTypeChecker::TokenTypeChecker (int log_handler (const char*, ...)) : log_ha
  */
 operator_t TokenTypeChecker::process_symbol () const {
     // Reaching this point means that we have a punctuation symbol.
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
     // We need to remain constant. Incrementing the operator is the job of the LiteralProcessor.
-    std::string::const_iterator temp = this->tokenizer_iterator;
+    auto temp = this->tokenizer_iterator;
 
     // We check how many symbols are in a row.
     // If more than 4, we set the maximum per single operator to 4.
@@ -24,8 +24,8 @@ operator_t TokenTypeChecker::process_symbol () const {
     // We compare operator size from our current tokenizer iterator to everything in the opcode map of that size.
     operator_size = temp - original_iterator;
     opcode_t opcode = 0;
-    char c_copy[MAX_OPERATOR_SIZE + 1];
-    strncpy(c_copy, &(*original_iterator), operator_size);
+    char16_t c_copy[MAX_OPERATOR_SIZE + 1];
+    std::char_traits<char16_t>::copy(c_copy, &(*original_iterator), operator_size);
     c_copy[operator_size] = '\0';
     while (true) {
         try {
@@ -61,7 +61,7 @@ int64_t TokenTypeChecker::get_char_offset () const {
 }
 
 bool TokenTypeChecker::next_token_is_number () const {
-    std::string::const_iterator temp = this->tokenizer_iterator;
+    auto temp = this->tokenizer_iterator;
 
     // If it starts with a negative sign, then we ignore it, since it might very well be a number.
     if (*temp == '-') {

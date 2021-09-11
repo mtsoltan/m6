@@ -13,7 +13,7 @@ Tokenizer::Tokenizer (int log_handler (const char*, ...)) : LiteralProcessor(log
  * @return
  */
 Token
-Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string::const_iterator& end) {
+Tokenizer::tokenize (const std::u16string::const_iterator& begin, const std::u16string::const_iterator& end) {
     // We need to make a reference to what the previous base token and token iterator were.
     // This is so that recursive calls of this function can work properly.
     // This is similar to pushing to stack in the figurative sense.
@@ -47,7 +47,7 @@ Tokenizer::tokenize (const std::string::const_iterator& begin, const std::string
  * @param file_contents
  * @return
  */
-Token Tokenizer::tokenize (const std::string& str) {
+Token Tokenizer::tokenize (const std::u16string& str) {
     return this->tokenize(str.begin(), str.end());
 }
 
@@ -65,7 +65,8 @@ Token Tokenizer::tokenize (const char* file_name) {
 
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
-        this->content = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        auto tmp_u8_str = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        fromUTF8(tmp_u8_str, this->content);
 
         file.close();
         return this->tokenize(this->content);
@@ -84,7 +85,7 @@ Token Tokenizer::tokenize (const char* file_name) {
  * @return
  */
 bool Tokenizer::process_next_token () {
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
     // Uses this->tokenizer_iterator to either process_identifier, process_number_literal, or process_symbol.
     bool rv = false;
 

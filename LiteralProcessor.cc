@@ -21,8 +21,8 @@ token_type_t LiteralProcessor::unexpect () {
 bool LiteralProcessor::process_keyword (const opcode_t memoized) {
 // If we have a memoized keyword, then just generate a token from that.
     if (memoized & OP_KEYWORD) {
-        std::string::const_iterator original_iterator = this->tokenizer_iterator;
-        this->tokenizer_iterator += strlen(Token::kw_opcode_to_cstr(memoized));
+        auto original_iterator = this->tokenizer_iterator;
+        this->tokenizer_iterator += std::char_traits<char16_t>::length(Token::kw_opcode_to_cstr(memoized));
 
         if (memoized & OP_KW_BOOLEAN) {
             this->base_token->token_vector.push_back(Token(
@@ -50,15 +50,15 @@ bool LiteralProcessor::process_keyword (const opcode_t memoized) {
  * @return
  */
 bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
 
     operator_t o = memoized.has_value() ? memoized.value() : this->process_symbol();
 
-    const char* end_operator;
+    const char16_t* end_operator;
 
     try {
-        char c_copy[MAX_OPERATOR_SIZE + 1];  // + 1 for \0.
-        strncpy(c_copy, &(*original_iterator), o.size);
+        char16_t c_copy[MAX_OPERATOR_SIZE + 1];  // + 1 for \0.
+        std::char_traits<char16_t>::copy(c_copy, &(*original_iterator), o.size);
         c_copy[o.size] = '\0';
 
         end_operator = get_begin_end_map().at(c_copy);
@@ -66,7 +66,7 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
         throw ERR_INVALID_START_OPERATOR;
     }
 
-    uint8_t end_size = strlen(end_operator);
+    uint8_t end_size = std::char_traits<char16_t>::length(end_operator);
 
     if (o.opcode & OP_NESTABLE) {  // {, (, [
         int64_t nesting_level = 0;
@@ -74,8 +74,10 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
             // Find next start/end operators and increment decrement nesting level until it hits -1.
             bool begin_found, end_found, string_ended;
             while (
-                    !(begin_found = strncmp(&(*++this->tokenizer_iterator), &(*original_iterator), o.size) == 0) &&
-                    !(end_found = strncmp(&(*this->tokenizer_iterator), end_operator, end_size) == 0) &&
+                    !(begin_found = std::char_traits<char16_t>::compare(
+                            &(*++this->tokenizer_iterator), &(*original_iterator), o.size) == 0) &&
+                    !(end_found = std::char_traits<char16_t>::compare(
+                            &(*this->tokenizer_iterator), end_operator, end_size) == 0) &&
                     !(string_ended = this->get_char_offset() == NOT_FOUND)
                     );
             if (begin_found) {
@@ -124,7 +126,7 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
                     return false;  // Syntax error, EOL encountered before string end.
                 }
             }
-            if (strncmp(&(*this->tokenizer_iterator), end_operator, end_size) == 0) {
+            if (std::char_traits<char16_t>::compare(&(*this->tokenizer_iterator), end_operator, end_size) == 0) {
                 break;  // We found an end operator.
             }
         }
@@ -188,7 +190,7 @@ bool LiteralProcessor::parse_range (const std::optional<operator_t> memoized) {
 
 
 bool LiteralProcessor::process_operator () {
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
     // We first try to process the symbol
 
     // We check the returned opcode, if it's a value token thingy, we just create the value token
@@ -255,7 +257,7 @@ bool LiteralProcessor::next_token_is_regex (const std::optional<operator_t> memo
  * @return
  */
 bool LiteralProcessor::process_identifier () {
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
 
     // An identifier consists only of identifier characters and digit characters.
     for (; this->get_char_offset() != NOT_FOUND; ++this->tokenizer_iterator) {
@@ -264,12 +266,12 @@ bool LiteralProcessor::process_identifier () {
         }
     }
 
-    std::string identifier = std::string(original_iterator, this->tokenizer_iterator);
+    std::u16string identifier(original_iterator, this->tokenizer_iterator);
 
     // This is the base_token of this LiteralProcessor. In the loop below, it will keep bubbling up
     // through parents.
     auto curent_token = this->base_token;
-    std::vector<std::string>::iterator position;
+    std::vector<std::u16string>::iterator position;
     while (true) {
         position = std::find(
                 curent_token->identifier_stack.begin(), curent_token->identifier_stack.end(), identifier);
@@ -311,7 +313,7 @@ bool LiteralProcessor::process_identifier () {
  * @return
  */
 bool LiteralProcessor::process_number_literal () {
-    std::string::const_iterator original_iterator = this->tokenizer_iterator;
+    auto original_iterator = this->tokenizer_iterator;
 
     token_subtype_t subtype = UNDEFINED;
 
